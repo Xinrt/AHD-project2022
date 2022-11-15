@@ -16,25 +16,25 @@ initial begin
     t_clk = 0;
     t_rst = 1;
     #2
-    if (t_addr_out != 32'h01000000) begin
+    if (t_addr_out != 32'h01000000) begin   //test asynchronous reset
         $display("Incorrect pc reset behavior.");
         $stop;
     end
     t_rst = 0;
     #2
-    if (t_addr_out != 32'h0) begin
+    if (t_addr_out != 32'h0) begin          //test address 0
         $display("Incorrect pc output.");
         $stop;
     end
     t_addr_in = 32'hff;
     #3
-    if (t_addr_out != 32'hff) begin
+    if (t_addr_out != 32'hff) begin         //test random address
         $display("Incorrect pc output.");
         $stop;
     end
     t_rst = 1;
     #1
-    if (t_addr_out != 32'h01000000) begin
+    if (t_addr_out != 32'h01000000) begin   //test reset again
         $display("Incorrect pc reset behavior.");
         $stop;
     end
