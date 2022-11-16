@@ -23,7 +23,6 @@ initial begin
     #10
     if (t_imm_out != 32'h000006cd) begin
         $display("Incorrect I-type sign extension for postive value.");
-        $display(t_imm_out);
         $stop;
     end
     t_instr = 32'h8cdff603; //I-type negative
