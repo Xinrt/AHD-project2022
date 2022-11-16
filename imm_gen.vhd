@@ -36,7 +36,7 @@ process(instr) begin
         else imm <= neg(10 downto 0) &
             instr(31)&instr(19 downto 12)&instr(20)&instr(30 downto 21) & '0';
         end if;
-    else imm <= x"00000000";    --nop
+    else imm <= x"00000000";    --default
     end if;
 end process;
 imm_out <= imm;
