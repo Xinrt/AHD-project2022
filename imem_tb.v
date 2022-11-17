@@ -23,12 +23,14 @@
 module imem_tb();
     reg  t_clk;
     reg  t_rst;
+    reg  t_en;
     reg  [31:0] t_addr;
     wire [31:0] t_instr_out;
     
     imem dut(
         .clk(t_clk),
         .rst(t_rst),
+        .en(t_en),
         .addr(t_addr),
         .instr_out(t_instr_out)
     );
@@ -43,6 +45,7 @@ module imem_tb();
     end
     
     initial begin
+        t_en = 1;
         t_rst = 1;
         #5;
         // test initial reset
@@ -52,7 +55,7 @@ module imem_tb();
             $stop;
         end
         
-        $display(t_clk);
+//        $display(t_clk);
         t_rst = 0;    
         t_addr = 32'h01000000;
 //        $display(t_addr);
@@ -64,7 +67,7 @@ module imem_tb();
         end        
         #5;
         
-        $display(t_clk);
+//        $display(t_clk);
         t_rst = 0;    
         t_addr = 32'h01000004;
 //        $display(t_addr);

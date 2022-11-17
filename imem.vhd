@@ -36,6 +36,7 @@ entity imem is
   Port ( 
     clk: in std_logic;    -- clock signal
     rst: in std_logic;    -- asynchronous reset signal
+    en: in std_logic;     -- imemRead enable signal
     addr: in std_logic_vector(31 downto 0);      -- 32-bit byte addressed pc address input
     instr_out: out std_logic_vector(31 downto 0)      -- 32-bit instruction value output
   );
@@ -71,13 +72,14 @@ begin
 addr_word(11-3 downto 0) <= addr(11-1 downto 2);
 
 process(clk, rst) begin
-    if (rst = '1') then       -- PC resets to 0x01000000 -> addr = 0x01000000
-        -- to_integer(unsigned(addr_word)) = 0
-        instr_out <= rom_words(0); 
-    elsif (clk'event and clk = '1') then 
---           report "The value of 'addr_word' is " & integer'image(to_integer(unsigned(addr_word)));
-        -- to_integer(unsigned(addr_word)) = 0, 1, 2, 3
-        instr_out <= rom_words(to_integer(unsigned(addr_word))+1);
+    if (en = '1') then
+        if (rst = '1') then       -- PC resets to 0x01000000 -> addr = 0x01000000
+            -- to_integer(unsigned(addr_word)) = 0
+            instr_out <= rom_words(0); 
+        elsif (clk'event and clk = '1') then 
+            -- to_integer(unsigned(addr_word)) = 0, 1, 2, 3
+            instr_out <= rom_words(to_integer(unsigned(addr_word))+1);
+        end if;
     end if;
 end process;
 end Behavioral;
