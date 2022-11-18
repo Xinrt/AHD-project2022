@@ -1,9 +1,10 @@
-Project Milestone 2
-Group_03 members: Xiao Ding
-                  Xinran Tang
-                  Qing Xiang (NetID:qx657)
+## Project Milestone 2 ##
+### Group_03 members: ###
+Xiao Ding
+Xinran Tang
+Qing Xiang (NetID:qx657)
 
-##Modules:
+### Modules ###
   Program Counter(pc.vhd):
     Contains 32-bit instruction address.
     Updates instruction address in Write Back stage.
@@ -17,7 +18,7 @@ Group_03 members: Xiao Ding
     Outputs the generated value to be one of the choices of the second operand of ALU.
     Outputs 32-bit 0 by default(immediate value not required).
   
-    Testbench(imm_gen_tb.v): Tests output with random positive and negative input instructions that cover all possible types of instructions.
+    Testbench(imm_gen_tb.v): Tests output with random positive and negative input instructions that cover all possible types.
   
   Control Unit(control.vhd):
     Generates control signals for other essential components according to the opcode.
