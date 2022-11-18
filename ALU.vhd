@@ -65,8 +65,8 @@ begin
         
         -- reset 
         if (rst = '1') then
-        data_out_tmp <=  "00000000000000000000000000000000";
-                branch_or_not_tmp <= '0';
+            data_out_tmp <=  "00000000000000000000000000000000";
+            branch_or_not_tmp <= '0';
 
         
         -- when the ALU run
@@ -111,6 +111,7 @@ begin
                     WHEN "11101" => data_out_tmp <= oprand_1(2 DOWNTO 0) & "00000000000000000000000000000";
                     WHEN "11110" => data_out_tmp <= oprand_1(1 DOWNTO 0) & "000000000000000000000000000000";
                     WHEN "11111" => data_out_tmp <= oprand_1(0) & "0000000000000000000000000000000";
+                    WHEN OTHERS => data_out_tmp <= oprand_1;
                 END CASE;
                 branch_or_not_tmp <= '0';
 
@@ -172,6 +173,7 @@ begin
                     WHEN "11101" => data_out_tmp <= "00000000000000000000000000000" & oprand_1(31 DOWNTO 29);
                     WHEN "11110" => data_out_tmp <= "000000000000000000000000000000" & oprand_1(31 DOWNTO 30);
                     WHEN "11111" => data_out_tmp <= "0000000000000000000000000000000" & oprand_1(31);
+                    WHEN OTHERS => data_out_tmp <= oprand_1;
                 END CASE;
                 branch_or_not_tmp <= '0';
 
@@ -226,6 +228,7 @@ begin
                         WHEN "11101" => data_out_tmp <= "00000000000000000000000000000" & oprand_1(31 DOWNTO 29);
                         WHEN "11110" => data_out_tmp <= "000000000000000000000000000000" & oprand_1(31 DOWNTO 30);
                         WHEN "11111" => data_out_tmp <= "0000000000000000000000000000000" & oprand_1(31);
+                        WHEN OTHERS => data_out_tmp <= oprand_1;
                     END CASE;
                 else
                     CASE oprand_2(4 DOWNTO 0) is
@@ -261,6 +264,7 @@ begin
                         WHEN "11101" => data_out_tmp <= "11111111111111111111111111111" & oprand_1(31 DOWNTO 29);
                         WHEN "11110" => data_out_tmp <= "111111111111111111111111111111" & oprand_1(31 DOWNTO 30);
                         WHEN "11111" => data_out_tmp <= "1111111111111111111111111111111" & oprand_1(31);
+                        WHEN OTHERS => data_out_tmp <= oprand_1;
                     END CASE;                
                 end if; 
                 branch_or_not_tmp <= '0';
@@ -308,7 +312,7 @@ begin
                 end if;
                 data_out_tmp <= STD_LOGIC_VECTOR(SIGNED(oprand_1) + SIGNED(oprand_2));
                 
-
+   
             elsif (ALU_Control = "1111") then  -- BGEU: branch if unsigned data 1 greater than or equal to data 2
                 if (UNSIGNED(rs_data_in_1) >= UNSIGNED(rs_data_in_2)) then
                     branch_or_not_tmp <= '1';
