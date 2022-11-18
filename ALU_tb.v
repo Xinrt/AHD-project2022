@@ -199,7 +199,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BEQ");
             $stop;        
         end
         t_ALU_Control = 4'b1000;
@@ -211,7 +211,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BEQ");
             $stop;        
         end
                         
@@ -225,7 +225,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BNE");
             $stop;        
         end
         t_ALU_Control = 4'b1001;
@@ -237,7 +237,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BNE");
             $stop;        
         end
             
@@ -251,7 +251,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BLT");
             $stop;        
         end
         t_ALU_Control = 4'b1100;
@@ -263,7 +263,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BLT");
             $stop;        
         end
         t_ALU_Control = 4'b1100;
@@ -275,7 +275,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BLT");
             $stop;        
         end
 
@@ -289,7 +289,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BGE");
             $stop;        
         end
         t_ALU_Control = 4'b1101;
@@ -301,7 +301,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BGE");
             $stop;        
         end
         t_ALU_Control = 4'b1101;
@@ -313,7 +313,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BGE");
             $stop;        
         end
             
@@ -327,7 +327,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BLTU");
             $stop;        
         end
         t_ALU_Control = 4'b1110;
@@ -339,7 +339,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BLTU");
             $stop;        
         end
         t_ALU_Control = 4'b1110;
@@ -351,7 +351,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BLTU");
             $stop;        
         end    
     
@@ -365,7 +365,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BGEU");
             $stop;        
         end
         t_ALU_Control = 4'b1111;
@@ -377,7 +377,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b0) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BGEU");
             $stop;        
         end
         t_ALU_Control = 4'b1111;
@@ -389,7 +389,7 @@ module ALU_tb();
         t_oprand_2 = 32'b01000000000000000000000000001000;
         #10;
         if (t_data_out != 32'b11001000000100000100001000101101 | t_branch_or_not != 1'b1) begin
-            $display("Incorrect shift right arithmetic");
+            $display("Incorrect BGEU");
             $stop;        
         end    
     
