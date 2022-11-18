@@ -1,113 +1,170 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 2022/11/15 20:16:24
--- Design Name: 
--- Module Name: Register_File - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 2022/11/16 00:00:53
+// Design Name: 
+// Module Name: Register_File_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
 
 
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-USE IEEE.STD_LOGIC_ARITH.ALL;
-USE IEEE.STD_LOGIC_UNSIGNED.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
-entity Register_File is
-    Port (clk : in STD_LOGIC;
-          rst : in STD_LOGIC;
-          
-          -- control signal
-          read_or_write : in STD_LOGIC_VECTOR (1 DOWNTO 0);
-          
-          -- register id that will be read or write
-          read_addr_1 : in STD_LOGIC_VECTOR (4 DOWNTO 0);
-          read_addr_2 : in STD_LOGIC_VECTOR (4 DOWNTO 0);
-          write_addr  : in STD_LOGIC_VECTOR (4 DOWNTO 0);
-          
-          -- the data that will be written in registers or read out from registers
-          write_data  : in STD_LOGIC_VECTOR (31 DOWNTO 0);
-          read_data_1 : out STD_LOGIC_VECTOR (31 DOWNTO 0) := "00000000000000000000000000000000";
-          read_data_2 : out STD_LOGIC_VECTOR (31 DOWNTO 0) := "00000000000000000000000000000000"
+module Register_File_tb();
+    
+    reg t_clk;
+    reg t_rst;
+    
+    reg [1:0] t_read_or_write;
+    
+    reg [4:0] t_read_addr_1;
+    reg [4:0] t_read_addr_2;
+    reg [4:0] t_write_addr;
+    
+    reg [31:0] t_write_data;
+    wire [31:0] t_read_data_1;
+    wire [31:0] t_read_data_2;
+    
+    integer i;
+    
+    Register_File Register_File_tb(
+        .clk(t_clk),
+        .rst(t_rst),
+        .read_or_write(t_read_or_write),
+        .read_addr_1(t_read_addr_1),
+        .read_addr_2(t_read_addr_2),
+        .write_addr(t_write_addr),
+        .write_data(t_write_data),
+        .read_data_1(t_read_data_1),
+        .read_data_2(t_read_data_2)
     );
-end Register_File;
-
-architecture Behavioral of Register_File is
     
-    type register_array is ARRAY (31 DOWNTO 0) of STD_LOGIC_VECTOR(31 DOWNTO 0);
-    constant registers_32_rst : register_array := (
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000",
-    "00000000000000000000000000000000", "00000000000000000000000000000000"
-    );
-    signal registers_32 : register_array := registers_32_rst;
+    always begin
+        #5; 
+        t_clk = ~t_clk;
+    end
     
-begin
-    
-    process(clk, rst) begin
+    initial begin
+        t_clk = 1;
+        t_rst = 1;
+        t_read_or_write = 2'b00;
+        #5;
         
-        -- reset
-        if (rst = '1') then
-            registers_32 <= registers_32_rst;
-            read_data_1 <= "00000000000000000000000000000000";
-            read_data_2 <= "00000000000000000000000000000000";
-                
-        elsif (clk'event and clk = '1') then
-             -- can only write data into write_addr of register file
-            if (read_or_write = "10") then
-                if (write_addr /= "00000") then -- R0 should always be 0 and cannot be written in other data
-                    registers_32(CONV_INTEGER(write_addr)) <= write_data;
-                else
-                    registers_32(0) <= "00000000000000000000000000000000"; -- R0 is always zero
-                end if;
-                read_data_1 <= "00000000000000000000000000000000";
-                read_data_2 <= "00000000000000000000000000000000";
-                            
-            -- can only read data from address read_addr of register file
-            elsif (read_or_write = "01") then
-                read_data_1 <= registers_32(CONV_INTEGER(read_addr_1));
-                read_data_2 <= registers_32(CONV_INTEGER(read_addr_2));
-            
-            -- cannot read and cannot write
-            else 
-                read_data_1 <= "00000000000000000000000000000000";
-                read_data_2 <= "00000000000000000000000000000000";
-            end if;
-            
-        end if;
-    end process;
+        // remove reset and enable whole RF
+        t_rst = 0;
+        
+        // write f0f0f0f0 to R1 and read it to first output
+        t_write_addr = 5'b00001;
+        t_write_data = 32'b11110000111100001111000011110000;
+        t_read_addr_1 = 5'b00001;
+        #10
+        // cannot read or write, so output should be 0
+        if (t_read_data_1 != 32'b0) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        // read only and cannot write
+        t_read_or_write = 2'b01;
+        #10;
+        if (t_read_data_1 != 32'b0) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        // write enable
+        t_read_or_write = 2'b10;        
+        #10;        
+        if (t_read_data_1 != 32'b0) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        // read enable, and output will be same as input
+        t_read_or_write = 2'b01;
+        #10; 
+        if (t_read_data_1 != 32'b11110000111100001111000011110000) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        #10;        
+
+        // write 0f0f0f0f to R31 and read it to second output
+        t_write_addr = 5'b11111;
+        t_write_data = 32'b00001111000011110000111100001111;
+        t_read_addr_2 = 5'b11111;
+        #10
+        // cannot read or write, so output should be 0
+        if (t_read_data_2 != 32'b0) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        // read only and cannot write
+        t_read_or_write = 2'b01;
+        #10;
+        if (t_read_data_2 != 32'b0) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        // write enable
+        t_read_or_write = 2'b10;        
+        #10;        
+        if (t_read_data_2 != 32'b0) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        // read enable, and output will be same as input
+        t_read_or_write = 2'b01;
+        #10; 
+        if (t_read_data_2 != 32'b00001111000011110000111100001111) begin
+            $display("Incorrect write and read");
+            $stop;
+        end
+        #10;
+        
+        // write 0f0f0f0f to R0 and read it to second output. R0 should always be 0 and cannot be write in other data.
+        t_write_addr = 5'b00000;
+        t_write_data = 32'b00001111000011110000111100001111;
+        t_read_addr_2 = 5'b00000;
+        t_read_or_write = 2'b10;
+        #10;
+        // enable read
+        t_read_or_write = 2'b01;
+        #10; 
+        if (t_read_data_2 != 32'b0) begin
+            $display("Incorrect, R0 has been written in");
+            $stop;
+        end
+        #10;
+
+        // reset all registers and test
+        t_rst = 1;
+        #10;
+        // stop reset (otherwise read_data will always be 0)
+        t_rst = 0;
+        #10;
+        // enable read
+        t_read_or_write = 2'b01;
+        for (i = 0; i < 32; i = i + 1) begin
+            t_read_addr_1 = i;
+            t_read_addr_2 = i;
+            #10
+            if (t_read_data_1 != 32'b0 | t_read_data_2 != 32'b0) begin
+                $display("Incorrect reset");
+                $stop;
+            end
+        end       
+        
+        $display("all tests passed");
+        $finish;
+        
+    end
     
-end Behavioral;
+endmodule
