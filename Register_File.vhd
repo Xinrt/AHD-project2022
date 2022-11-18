@@ -47,8 +47,8 @@ entity Register_File is
           
           -- the data that will be written in registers or read out from registers
           write_data  : in STD_LOGIC_VECTOR (31 DOWNTO 0);
-          read_data_1 : out STD_LOGIC_VECTOR (31 DOWNTO 0);
-          read_data_2 : out STD_LOGIC_VECTOR (31 DOWNTO 0)
+          read_data_1 : out STD_LOGIC_VECTOR (31 DOWNTO 0) := "00000000000000000000000000000000";
+          read_data_2 : out STD_LOGIC_VECTOR (31 DOWNTO 0) := "00000000000000000000000000000000"
     );
 end Register_File;
 
@@ -78,27 +78,36 @@ architecture Behavioral of Register_File is
 begin
     
     process(clk, rst) begin
+        
+        -- reset
         if (rst = '1') then
             registers_32 <= registers_32_rst;
+            read_data_1 <= "00000000000000000000000000000000";
+            read_data_2 <= "00000000000000000000000000000000";
+                
         elsif (clk'event and clk = '1') then
-            
-              -- write data into write_addr of register file
+             -- write data into write_addr of register file
             if (read_or_write(0) = '1') then
                 if (write_addr /= "00000") then -- R0 should always be 0 and cannot be written in other data
                     registers_32(CONV_INTEGER(write_addr)) <= write_data;
+                else
+                    registers_32(0) <= "00000000000000000000000000000000"; -- R0 is always zero
                 end if;
             end if;
             
             -- read data from read_addr of register file
             if (read_or_write(1) = '1') then
+                report ("1!!");
                 read_data_1 <= registers_32(CONV_INTEGER(read_addr_1));
                 read_data_2 <= registers_32(CONV_INTEGER(read_addr_2));
+            else 
+                report ("0!!");
+
+                read_data_1 <= "00000000000000000000000000000000";
+                read_data_2 <= "00000000000000000000000000000000";
             end if;
             
         end if;
     end process;
-    
-    -- R0 of registers is special that it is read-only and is always zero
-    registers_32(0) <= "00000000000000000000000000000000";
     
 end Behavioral;
