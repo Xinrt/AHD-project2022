@@ -50,7 +50,7 @@ module Register_File_tb();
     );
     
     always begin
-        #5 
+        #5; 
         t_clk = ~t_clk;
     end
     
@@ -58,7 +58,7 @@ module Register_File_tb();
         t_clk = 1;
         t_rst = 1;
         t_read_or_write = 2'b00;
-        #5
+        #5;
         
         // remove reset and enable whole RF
         t_rst = 0;
