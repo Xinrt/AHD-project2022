@@ -39,7 +39,7 @@ entity dmem is
   Port ( 
     clk: in std_logic;    -- clock signal
     rst: in std_logic;    -- asynchronous reset signal
---    dmem_rw: in std_logic_vector(1 downto 0);   -- dmemRead/Write 00 01 10
+    en: in std_logic_vector(1 downto 0);   -- dmemRead/Write 00 01 10
     w_en: in std_logic_vector(3 downto 0);   -- write enable
     addr: in std_logic_vector(31 downto 0);         -- input address
     din: in std_logic_vector(31 downto 0);          -- input data
@@ -75,7 +75,7 @@ begin
         -- if the 21st bit of the address input is 1
         -- implement special read-only memory-mapped values at addresses 0x00100000, 0x00100004, 0x00100008
         -- read
-            if (addr(20)='1') then
+            if (addr(20)='1' and en = "01") then
                 
                 if(to_integer(unsigned(addr_word)) = 0) then
                     data_out <= x"11987251";       -- N number of Qing Xiang
@@ -89,6 +89,7 @@ begin
             else 
             -- write
             -- using 4 interleaved sets of 8-bit (1 byte) wide memories
+            if(en = "10") then
                 if(w_en(0)='1') then
                     temp(to_integer(unsigned(addr_word)))(7 downto 0) := din(7 downto 0); end if;
                 if(w_en(1)='1') then
@@ -100,8 +101,9 @@ begin
         
                 data_out <= temp(to_integer(unsigned(addr_word)));
                 temp := (others => (others =>'0')); 
+            end if;
         end if;    
-         end if;
+        end if;
         end if;
 end process;
 

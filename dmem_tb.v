@@ -23,6 +23,7 @@
 module dmem_tb();
     reg  t_clk;
     reg  t_rst;
+    reg  [1:0] t_en;
     reg  [3:0] t_we;
     reg  [31:0] t_addr;
     reg  [31:0] t_din;
@@ -31,6 +32,7 @@ module dmem_tb();
     dmem dut(
         .clk(t_clk),
         .rst(t_rst),
+        .en(t_en),
         .w_en(t_we),
         .addr(t_addr),
         .din(t_din),
@@ -64,6 +66,7 @@ module dmem_tb();
      
         #5;
         t_rst=1'b0;
+        t_en = 2'b10;
         t_we=4'b0001;
         t_addr=32'h80000000;
         #5;
@@ -74,6 +77,7 @@ module dmem_tb();
         
         #5
         t_rst=1'b0;
+        t_en = 2'b10;
         t_we=4'b0010;
         t_addr=32'h80000000;
         #5;
@@ -84,6 +88,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
+        t_en = 2'b10;
         t_we=4'b0100;
         t_addr=32'h80000000;
         #5;
@@ -94,6 +99,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
+        t_en = 2'b10;
         t_we=4'b1000;
         t_addr=32'h80000000;
         #5;
@@ -104,6 +110,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
+        t_en = 2'b10;
         t_we=4'b0011;
         t_addr=32'h80000000;
         #5;
@@ -114,6 +121,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
+        t_en = 2'b01;
         t_we=4'b0011;
         t_addr=32'h00100000;
         #5;
@@ -124,6 +132,7 @@ module dmem_tb();
 
         #5;      
         t_rst=1'b0;
+        t_en = 2'b01;
         t_we=4'b0011;
         t_addr=32'h00100004;
         #5;
@@ -134,6 +143,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
+        t_en = 2'b01;
         t_we=4'b0011;
         t_addr=32'h00100008;
         #5;
