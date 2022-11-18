@@ -97,12 +97,9 @@ begin
             
             -- read data from read_addr of register file
             if (read_or_write(1) = '1') then
-                report ("1!!");
                 read_data_1 <= registers_32(CONV_INTEGER(read_addr_1));
                 read_data_2 <= registers_32(CONV_INTEGER(read_addr_2));
             else 
-                report ("0!!");
-
                 read_data_1 <= "00000000000000000000000000000000";
                 read_data_2 <= "00000000000000000000000000000000";
             end if;
