@@ -1,7 +1,7 @@
 ## Project Milestone 2 ##
 ### Group_03 members: ###
-Xiao Ding,
-Xinran Tang(NetID:xt2191),
+Xiao Ding (NetID:xd2076),
+Xinran Tang (NetID:xt2191),
 Qing Xiang (NetID:qx657)
 
 ### Modules ###
