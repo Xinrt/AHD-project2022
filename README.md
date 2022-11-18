@@ -30,7 +30,7 @@ Qing Xiang (NetID:qx657)
 
 
   Register File(Register_File.vhd):
-    
+    Contains 32 32-bit registers. Use input signal read_or_write to enable the read and write function. When read is enabled, outputs read_data_1 and read_data_2 will output data stored at registers reg(read_addr_1) and reg(read_addr_2) at rising edge of clk. Otherwise, read_data_1 and read_data will output 32-bit zeros at rising edge of clk. When write is enabled, 32-bit input data write_data will be written into reg(write_addr). Otherwise, data will not be written into registers. rst signal is used to reset all 32 registers to 32-bit zeros.
 
     Testbench(Register_File_tb.v):
 
