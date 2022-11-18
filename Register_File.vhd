@@ -86,19 +86,22 @@ begin
             read_data_2 <= "00000000000000000000000000000000";
                 
         elsif (clk'event and clk = '1') then
-             -- write data into write_addr of register file
-            if (read_or_write(0) = '1') then
+             -- can only write data into write_addr of register file
+            if (read_or_write = "10") then
                 if (write_addr /= "00000") then -- R0 should always be 0 and cannot be written in other data
                     registers_32(CONV_INTEGER(write_addr)) <= write_data;
                 else
                     registers_32(0) <= "00000000000000000000000000000000"; -- R0 is always zero
                 end if;
-            end if;
-            
-            -- read data from read_addr of register file
-            if (read_or_write(1) = '1') then
+                read_data_1 <= "00000000000000000000000000000000";
+                read_data_2 <= "00000000000000000000000000000000";
+                            
+            -- can only read data from address read_addr of register file
+            elsif (read_or_write = "01") then
                 read_data_1 <= registers_32(CONV_INTEGER(read_addr_1));
                 read_data_2 <= registers_32(CONV_INTEGER(read_addr_2));
+            
+            -- cannot read and cannot write
             else 
                 read_data_1 <= "00000000000000000000000000000000";
                 read_data_2 <= "00000000000000000000000000000000";
