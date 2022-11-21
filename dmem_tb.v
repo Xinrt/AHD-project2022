@@ -152,6 +152,28 @@ module dmem_tb();
             $stop;
         end               
         
+        // test enable signal     
+        #5;      
+        t_rst=1'b0;
+        t_en = 2'b00;
+        t_we=4'b0011;
+        t_addr=32'h00100008;
+        #5;
+        if(t_dout!=32'h00000000) begin
+            $display("Enable signal not work correctly");
+            $stop;
+        end     
+        
+        #5;      
+        t_rst=1'b0;
+        t_en = 2'b11;
+        t_we=4'b0011;
+        t_addr=32'h00100008;
+        #5;
+        if(t_dout!=32'h00000000) begin
+            $display("Enable signal not work correctly");
+            $stop;
+        end   
         
         $display("All tests passed");
         $finish;
