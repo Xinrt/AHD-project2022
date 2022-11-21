@@ -70,7 +70,7 @@ module dmem_tb();
         t_we=4'b0001;
         t_addr=32'h80000000;
         #5;
-        if(t_dout!=32'h00000018) begin
+        if(t_dout!=32'h00000000) begin
             $display("Not write correctly");
             $stop;
         end
@@ -81,7 +81,7 @@ module dmem_tb();
         t_we=4'b0010;
         t_addr=32'h80000000;
         #5;
-        if(t_dout!=32'h00001100) begin
+        if(t_dout!=32'h00000000) begin
             $display("Not write correctly");
             $stop;
         end
@@ -92,7 +92,7 @@ module dmem_tb();
         t_we=4'b0100;
         t_addr=32'h80000000;
         #5;
-        if(t_dout!=32'h00220000) begin
+        if(t_dout!=32'h00000000) begin
             $display("Not write correctly");
             $stop;
         end
@@ -103,7 +103,7 @@ module dmem_tb();
         t_we=4'b1000;
         t_addr=32'h80000000;
         #5;
-        if(t_dout!=32'h20000000) begin
+        if(t_dout!=32'h00000000) begin
             $display("Not write correctly");
             $stop;
         end
@@ -114,7 +114,7 @@ module dmem_tb();
         t_we=4'b0011;
         t_addr=32'h80000000;
         #5;
-        if(t_dout!=32'h00001118) begin
+        if(t_dout!=32'h00000000) begin
             $display("Not write correctly");
             $stop;
         end

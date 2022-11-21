@@ -48,13 +48,14 @@ entity dmem is
 end dmem;
 
 architecture Behavioral of dmem is
--- Instruction Memory Size (4KB or 1024 Words)
+-- Data Memory Size (4KB or 1024 Words)
 -- RAM_LENGTH_WORDS = 1024
 type ram is array(0 to 1024-1) of std_logic_vector(31 downto 0);
 signal ram_words: ram :=  (x"00000000", others => (others =>'0'));
 signal addr_word: std_logic_vector(31 downto 0) := x"00000000";   -- 32-bit word addressed pc address input
 signal addr0: std_logic_vector(31 downto 0) := x"80000000";
 signal data_out: std_logic_vector(31 downto 0);
+signal ram_word: ram;       -- store the written input
 
 begin
 -- RAM_LENGTH_BITS = 4096 = 2^12 
@@ -99,8 +100,15 @@ begin
                 if(w_en(3)='1') then
                     temp(to_integer(unsigned(addr_word)))(31 downto 24) := din(31 downto 24); end if;
         
-                data_out <= temp(to_integer(unsigned(addr_word)));
+--                data_out <= temp(to_integer(unsigned(addr_word)));
+                ram_word(to_integer(unsigned(addr_word))) <= temp(to_integer(unsigned(addr_word)));
+                report "The value of 'ram word' is " & integer'image(to_integer(unsigned(ram_word(to_integer(unsigned(addr_word))))));
+                data_out <= x"00000000";
+--                data_out <= ram_word(to_integer(unsigned(addr_word)));
+                report "The value of 'data out' is " & integer'image(to_integer(unsigned(data_out)));
                 temp := (others => (others =>'0')); 
+            else
+                data_out <= x"00000000";
             end if;
         end if;    
         end if;
