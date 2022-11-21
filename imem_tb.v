@@ -99,6 +99,19 @@ module imem_tb();
             $display("Not reading the value at desired address correctly");
             $stop; 
         end
+        
+        // test enable signal
+        #5;
+        t_en = 0;
+        t_rst = 0;    
+        t_addr = 32'h0100000c;
+//        $display(t_addr);
+//        $display(t_instr_out);
+        #5;
+        if(t_instr_out!=32'h00000000) begin
+            $display("Enable signal not work correctly");
+            $stop; 
+        end
 
       
         $display("All tests passed");

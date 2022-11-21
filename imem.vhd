@@ -80,6 +80,8 @@ process(clk, rst) begin
             -- to_integer(unsigned(addr_word)) = 0, 1, 2, 3
             instr_out <= rom_words(to_integer(unsigned(addr_word))+1);
         end if;
+    else
+        instr_out <= x"00000000";
     end if;
 end process;
 end Behavioral;
