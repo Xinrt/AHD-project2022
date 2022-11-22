@@ -16,10 +16,10 @@ Tasks 1, 2, 3 will be simultaneous.
 
 **Before Milestone 3 (Nov 18th to Dec 16th):**
 
-Task 4: Top module (including 3 multiplexers)
+Task 4: Top module (including 3 multiplexers) 11.21-11.28
 
-Task 5: Testbench for top module
+Task 5: Testbench for top module 11.28-12.2
 
-Task 6: FPGA implementation
+Task 6: FPGA implementation 12.2-12.7
 
 Tasks 4, 5, 6 will be sequential.
