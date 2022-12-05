@@ -22,6 +22,11 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL; 
 use IEEE.std_logic_unsigned.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use std.textio.all;
+use ieee.std_logic_textio.all;
+
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -50,6 +55,23 @@ architecture Behavioral of imem is
 -- ROM_LENGTH_WORDS = 512
 
 type instr_rom is array(0 to 512-1) of std_logic_vector(31 downto 0);
+-- Read a *.hex file
+impure function instr_rom_readfile(FileName : STRING) return
+instr_rom is
+file FileHandle : TEXT open READ_MODE is FileName;
+variable CurrentLine : LINE;
+variable CurrentWord : std_logic_vector(31 downto 0);
+variable Result : instr_rom := (others => (others => 'X'));
+begin
+for i in 0 to 512 - 1 loop
+exit when endfile(FileHandle);
+readline(FileHandle, CurrentLine);
+hread(CurrentLine, CurrentWord);
+Result(i) := CurrentWord;
+end loop;
+return Result;
+end function;
+
 --signal rom_words: instr_rom;        -- word addressed read only memory
 signal addr_word: std_logic_vector(31 downto 0) := x"00000000";   -- 32-bit word addressed pc address input
 
@@ -58,7 +80,8 @@ signal addr_word: std_logic_vector(31 downto 0) := x"00000000";   -- 32-bit word
 -- rom_words(1£©= x"00200113" the instruction at the 2nd address is x"00200113" (addi x2, x0, 2)
 -- rom_words(2£©= x"002080b3" the instruction at the 3rd address is x"002080b3" (add x1, x1, x2)
 -- rom_words(3£©= x"ffdff06f" the instruction at the 4th address is x"ffdff06f" (j loop)
-signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
+--signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
+signal rom_words: instr_rom := instr_rom_readfile("main.txt");
 signal pc0: std_logic_vector(31 downto 0) := x"01000000";
 begin
 -- ROM_LENGTH_BITS = 2024 = 2^11 
