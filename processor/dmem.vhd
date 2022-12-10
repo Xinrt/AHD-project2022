@@ -39,11 +39,12 @@ entity dmem is
   Port ( 
     clk: in std_logic;    -- clock signal
     rst: in std_logic;    -- asynchronous reset signal
-    dmemRW: in std_logic_vector(1 downto 0);   -- dmemRead/Write 00 01 10
-    w_en: in std_logic_vector(3 downto 0);   -- write enable
+    dmemRW: in std_logic_vector(1 downto 0);        -- dmemRead/Write 00 01 10
+    w_en: in std_logic_vector(3 downto 0);          -- write enable
     addr: in std_logic_vector(31 downto 0);         -- input address
     din: in std_logic_vector(31 downto 0);          -- input data
-    dout: out std_logic_vector(31 downto 0)         -- output data
+    dout: out std_logic_vector(31 downto 0);        -- output data
+    outofbound: out std_logic                       -- address out of bound signal
   );
 end dmem;
 
@@ -56,6 +57,7 @@ signal addr_word: std_logic_vector(31 downto 0) := x"00000000";   -- 32-bit word
 signal addr0: std_logic_vector(31 downto 0) := x"80000000";
 signal data_out: std_logic_vector(31 downto 0);
 signal ram_word: ram;       -- store the written input
+signal bound: std_logic;
 
 begin
 -- RAM_LENGTH_BITS = 4096 = 2^12 
@@ -69,6 +71,7 @@ begin
     if (rst = '1') then       -- resets
         report "reset ";
         data_out <= x"00000001";
+        bound <= '0';
     elsif (clk'event and clk = '1') then           
         -- size of word addressed addresses is 1024
         if (addr_word < 1024) then
@@ -90,31 +93,34 @@ begin
             else 
             -- write
             -- using 4 interleaved sets of 8-bit (1 byte) wide memories
-            if(dmemRW = "10") then
-                if(w_en(0)='1') then
-                    temp(to_integer(unsigned(addr_word)))(7 downto 0) := din(7 downto 0); end if;
-                if(w_en(1)='1') then
-                    temp(to_integer(unsigned(addr_word)))(15 downto 8) := din(15 downto 8); end if;
-                if(w_en(2)='1') then
-                    temp(to_integer(unsigned(addr_word)))(23 downto 16) := din(23 downto 16); end if;
-                if(w_en(3)='1') then
-                    temp(to_integer(unsigned(addr_word)))(31 downto 24) := din(31 downto 24); end if;
-        
---                data_out <= temp(to_integer(unsigned(addr_word)));
-                ram_word(to_integer(unsigned(addr_word))) <= temp(to_integer(unsigned(addr_word)));
-                report "The value of 'ram word' is " & integer'image(to_integer(unsigned(ram_word(to_integer(unsigned(addr_word))))));
-                data_out <= x"00000000";
---                data_out <= ram_word(to_integer(unsigned(addr_word)));
-                report "The value of 'data out' is " & integer'image(to_integer(unsigned(data_out)));
-                temp := (others => (others =>'0')); 
-            else
-                data_out <= x"00000000";
+                if(dmemRW = "10") then
+                    if(w_en(0)='1') then
+                        temp(to_integer(unsigned(addr_word)))(7 downto 0) := din(7 downto 0); end if;
+                    if(w_en(1)='1') then
+                        temp(to_integer(unsigned(addr_word)))(15 downto 8) := din(15 downto 8); end if;
+                    if(w_en(2)='1') then
+                        temp(to_integer(unsigned(addr_word)))(23 downto 16) := din(23 downto 16); end if;
+                    if(w_en(3)='1') then
+                        temp(to_integer(unsigned(addr_word)))(31 downto 24) := din(31 downto 24); end if;
+            
+    --                data_out <= temp(to_integer(unsigned(addr_word)));
+                    ram_word(to_integer(unsigned(addr_word))) <= temp(to_integer(unsigned(addr_word)));
+                    report "The value of 'ram word' is " & integer'image(to_integer(unsigned(ram_word(to_integer(unsigned(addr_word))))));
+                    data_out <= x"00000000";
+    --                data_out <= ram_word(to_integer(unsigned(addr_word)));
+                    report "The value of 'data out' is " & integer'image(to_integer(unsigned(data_out)));
+                    temp := (others => (others =>'0')); 
+                else
+                    data_out <= x"00000000";
+                end if;
             end if;
+        else
+            data_out <= x"00000000";
+            bound <= '1';
         end if;    
-        end if;
-        end if;
+    end if;
 end process;
 
 dout <= data_out;
-
+outofbound <= bound;
 end Behavioral;

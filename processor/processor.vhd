@@ -97,13 +97,15 @@ architecture Behavioral of processor is
     --Data Memory
     signal dmemRW0: std_logic_vector(1 downto 0);
     signal dmemdout: std_logic_vector(31 downto 0);
+    signal haltmux: std_logic;
     component dmem is
         port(
             clk, rst: in std_logic;
             dmemRW: in std_logic_vector (1 downto 0);
             addr: in std_logic_vector(31 downto 0);
             din: in std_logic_vector(31 downto 0);
-            dout: out std_logic_vector(31 downto 0)
+            dout: out std_logic_vector(31 downto 0);
+            outofbound: out std_logic
         );
     end component;
     --branch multiplexer control
@@ -121,6 +123,7 @@ begin
 --    rstx <= rst2;
     --multiplexers
     brmux <= brctrl and alubr;
+    with haltmux select opcode0 <= instr0(6 downto 0) when '0', b"1110011" when '1';
     with brmux select pcin <= pcout + b"100" when '0', aludout when '1';
     with src1mux select op1 <= rfdout1 when '0', pcout when '1';
     with src2mux select op2 <= rfdout2 when '0', imm when '1';
@@ -193,7 +196,8 @@ begin
             dmemRW => dmemRW0,
             addr => aludout,
             din => rfdout2,
-            dout => dmemdout
+            dout => dmemdout,
+            outofbound => haltmux
         );
 --    output <= 
 end Behavioral;

@@ -5,7 +5,7 @@ entity control is
   Port (clk: in std_logic;    --clock signal
         rst: in std_logic;    --asynchronous reset signal
         en: in std_logic;     --global enable signal
-        opcode: in std_logic_vector (6 downto 0);   --7-bit opcode
+        instr: in std_logic_vector (31 downto 0);   --32-bit instruction
         br: out std_logic;                          --1-bit branch control signal
         dmemRW: out std_logic_vector (1 downto 0);  --2-bit read or write data memory control signal
         dmem2Reg: out std_logic_vector (1 downto 0);--2-bit write back source control signal
@@ -20,6 +20,7 @@ end control;
 
 architecture Behavioral of control is
     -- temporary control signals
+    signal opcode: std_logic_vector (6 downto 0);
     signal brt: std_logic;                          
     signal dmemRWt: std_logic_vector (1 downto 0);  
     signal dmem2Regt: std_logic_vector (1 downto 0);
@@ -40,6 +41,7 @@ architecture Behavioral of control is
     constant HLT: std_logic_vector (2 downto 0):= "000";    --Halt   
 begin
 --Calculate control signals based on opcode
+opcode <= instr(6 downto 0);
 process(opcode) begin
     --set temporary control signals to default values
     brt <= '0';
