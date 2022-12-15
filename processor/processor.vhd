@@ -98,10 +98,12 @@ architecture Behavioral of processor is
     signal dmemRW0: std_logic_vector(1 downto 0);
     signal dmemdout: std_logic_vector(31 downto 0);
     signal haltmux: std_logic;
+    signal func: std_logic_vector(2 downto 0);
     component dmem is
         port(
             clk, rst: in std_logic;
             dmemRW: in std_logic_vector (1 downto 0);
+            func3: in std_logic_vector(2 downto 0);
             addr: in std_logic_vector(31 downto 0);
             din: in std_logic_vector(31 downto 0);
             dout: out std_logic_vector(31 downto 0);
@@ -123,6 +125,7 @@ begin
 --    rstx <= rst2;
     --multiplexers
     brmux <= brctrl and alubr;
+    func <= instr0(14 downto 12);
     with haltmux select opcode0 <= instr0(6 downto 0) when '0', b"1110011" when '1';
     with brmux select pcin <= pcout + b"100" when '0', aludout when '1';
     with src1mux select op1 <= rfdout1 when '0', pcout when '1';
@@ -194,6 +197,7 @@ begin
         port map(
             clk => clk0, rst => rst0,
             dmemRW => dmemRW0,
+            func3 => func,
             addr => aludout,
             din => rfdout2,
             dout => dmemdout,
