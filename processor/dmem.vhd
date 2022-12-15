@@ -42,7 +42,7 @@ entity dmem is
     dmemRW: in std_logic_vector(1 downto 0);        -- dmemRead/Write 00 01 10
     func3: in std_logic_vector(2 downto 0);         -- func3
     addr: in std_logic_vector(31 downto 0);         -- input address (byte)
-    sw0: in std_logic_vector(16 downto 0);           -- input switches
+    sw0: in std_logic_vector(15 downto 0);           -- input switches
     din: in std_logic_vector(31 downto 0);          -- input data
     dout: out std_logic_vector(31 downto 0);        -- output data
     outofbound: out std_logic                       -- address out of bound signal
