@@ -54,7 +54,7 @@ architecture Behavioral of dmem is
 -- RAM_LENGTH_WORDS = 1024
 type ram is array(0 to 1023) of std_logic_vector(31 downto 0);
 signal ram_words: ram :=  (x"00000000", others => (others =>'0'));  -- dmem array 
-signal addr_word: std_logic_vector(31 downto 0) := x"00000000";   -- 32-bit word addressed pc address input
+signal addr_word: integer;   -- 32-bit word addressed pc address input
 signal byte: std_logic_vector(1 downto 0);  -- byte selection
 signal word: std_logic_vector(31 downto 0); -- word at given address
 signal data_out: std_logic_vector(31 downto 0);                     -- read result
