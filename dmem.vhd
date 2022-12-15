@@ -42,7 +42,7 @@ entity dmem is
     dmemRW: in std_logic_vector(1 downto 0);        -- dmemRead/Write 00 01 10
     func3: in std_logic_vector(2 downto 0);         -- func3
     addr: in std_logic_vector(31 downto 0);         -- input address (byte)
-    sw: in std_logic_vector(16 downto 0);           -- input switches
+    sw0: in std_logic_vector(16 downto 0);           -- input switches
     din: in std_logic_vector(31 downto 0);          -- input data
     dout: out std_logic_vector(31 downto 0);        -- output data
     outofbound: out std_logic                       -- address out of bound signal
@@ -88,7 +88,7 @@ begin
         bound <= '0';
     elsif (clk'event and clk = '1') then           
         -- size of word addressed addresses is 1024
-        SW <= x"0000" & sw; -- store switches
+        SW <= x"0000" & sw0; -- store switches
         if(dmemRW = "01") then
         -- read
             -- 0x00100000 - 0x80000000
