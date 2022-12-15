@@ -8,7 +8,7 @@ entity processor is
   Port (clk0: in std_logic;    --clock signal
         rst0: in std_logic;    --asynchronous reset signal
         en0: in std_logic;     --global enable signal
-        sw: in std_logic_vector(16 downto 0);  --input switches
+        sw: in std_logic_vector(15 downto 0);  --input switches
         regfile: out reg_32   --output register file
         );
 end processor;
