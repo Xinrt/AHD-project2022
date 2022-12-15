@@ -30,9 +30,9 @@ module imem_tb();
     imem dut(
         .clk(t_clk),
         .rst(t_rst),
-        .en(t_en),
+        .imemR(t_en),
         .addr(t_addr),
-        .instr_out(t_instr_out)
+        .instr(t_instr_out)
     );
     
     initial begin
@@ -47,10 +47,9 @@ module imem_tb();
     initial begin
         t_en = 1;
         t_rst = 1;
-        #5;
         // test initial reset
         t_addr = 32'h01000000;
-        if(t_instr_out != 32'h00100093) begin
+        if(t_instr_out != 32'h00000000) begin
             $display("Incorrect initial reset");
             $stop;
         end
