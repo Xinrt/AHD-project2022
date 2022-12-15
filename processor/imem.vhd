@@ -51,8 +51,8 @@ signal addr_word: std_logic_vector(31 downto 0);  -- 32-bit word addressed pc ad
 --signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
 signal rom_words: instr_rom := instr_rom_readfile("main.mem");
 
-signal a : std_logic_vector(31 downto 0) :=  "00000001000000000000000000000000";
-signal b : std_logic_vector(31 downto 0) :=  "00000001000000000000100000000000";
+signal lower_bound : std_logic_vector(31 downto 0) :=  "00000001000000000000000000000000";
+signal upper_bound : std_logic_vector(31 downto 0) :=  "00000001000000000000100000000000";
 
 
 begin
@@ -77,7 +77,7 @@ process(clk, rst) begin
       elsif (clk'event and clk = '1') then 
           -- to_integer(unsigned(addr_word)) = 0, 1, 2, 3
           if(imemR = '1') then
-              if((unsigned(a) < unsigned(addr)) and (unsigned(addr) < unsigned(b))) then
+              if((unsigned(lower_bound) < unsigned(addr)) and (unsigned(addr) < unsigned(upper_bound))) then
                   if(addr(1 downto 0) /= "00") then word <= x"00000073"; -- halt instr
                   else word <= rom_words(to_integer(unsigned(addr(12 downto 2))));
                   end if;
