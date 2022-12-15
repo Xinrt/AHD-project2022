@@ -85,7 +85,7 @@ architecture Behavioral of processor is
     signal alubr: std_logic;
     component alu is
         port(
-            control: in std_logic_vector(31 downto 0);
+            control: in std_logic_vector(3 downto 0);
             operand1,operand2,din1,din2: in std_logic_vector(31 downto 0);
             dout: out std_logic_vector(31 downto 0);
             brout: out std_logic
