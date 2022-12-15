@@ -188,7 +188,7 @@ begin
                     else bound <= '1';
                     end if;
                 when "010" => -- SW
-                    if(byte = "00") then ram_words(addr_word) <= din
+                    if(byte = "00") then ram_words(addr_word) <= din;
                     else bound <= '1';
                     end if;
                 when others => null;
