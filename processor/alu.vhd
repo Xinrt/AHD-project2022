@@ -28,7 +28,7 @@ architecture Behavioral of alu is
     signal branch_or_not_tmp : STD_LOGIC := '0';
     
 begin
-process begin
+process(control) begin
     if (control = "0000") then     -- add
         data_out_tmp <= STD_LOGIC_VECTOR(SIGNED(operand1) + SIGNED(operand2));
         branch_or_not_tmp <= '0';
