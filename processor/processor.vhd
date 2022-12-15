@@ -2,11 +2,18 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.std_logic_unsigned.ALL;
 
+--package reg_32_pkg is
+--    type reg_32 is array(31 DOWNTO 0) of STD_LOGIC_VECTOR(31 DOWNTO 0);
+--end package;
+
+use work.reg_32_pkg.all;
+
+
 entity processor is
   Port (clk0: in std_logic;    --clock signal
         rst0: in std_logic;    --asynchronous reset signal
         en0: in std_logic;     --global enable signal
-        output: out std_logic   --output signal
+        regfile: out reg_32   --output register file
         );
 end processor;
 
@@ -55,13 +62,15 @@ architecture Behavioral of processor is
     --Register File
     signal regRW0: std_logic_vector (1 downto 0);
     signal rfdin,rfdout1,rfdout2: std_logic_vector (31 downto 0);
+    signal reg_out0: reg_32;
     component rf is
         port(
             clk, rst: in std_logic;
             regRW: in std_logic_vector (1 downto 0);
             r1,r2,rd: in std_logic_vector(4 downto 0);
             din: in std_logic_vector (31 downto 0);
-            dout1,dout2: out std_logic_vector(31 downto 0)
+            dout1,dout2: out std_logic_vector(31 downto 0);
+            reg_out: out reg_32
         );
     end component;
     --Arithmetic Logic Unit Control
@@ -169,7 +178,8 @@ begin
             rd => instr0(11 downto 7),
             din => rfdin,
             dout1 => rfdout1,
-            dout2 => rfdout2    
+            dout2 => rfdout2,
+            reg_out => reg_out0
         );
     alucontrol0: alucontrol
         port map(
@@ -203,5 +213,5 @@ begin
             dout => dmemdout,
             outofbound => haltmux
         );
---    output <= 
+regfile <= reg_out0;
 end Behavioral;
