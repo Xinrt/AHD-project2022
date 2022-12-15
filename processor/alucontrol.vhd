@@ -19,7 +19,7 @@ architecture Behavioral of alucontrol is
     signal ALU_Control_tmp : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
     
 begin
-process begin
+process(ALUOp) begin
     -- load/store instruction or LUI/AUIPC/JAL/JALR instruction
     if (ALUOp = "00") then
         ALU_Control_tmp <= "0000"; -- ALU use add function
