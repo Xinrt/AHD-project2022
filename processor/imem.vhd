@@ -2,7 +2,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL; 
 use IEEE.std_logic_unsigned.all;
 use IEEE.NUMERIC_STD.ALL;
-use ieee.numeric_std.all;
 use std.textio.all;
 use ieee.std_logic_textio.all;
 
@@ -45,12 +44,17 @@ end function;
 signal addr_word: std_logic_vector(31 downto 0);  -- 32-bit word addressed pc address input
 
 -- store addi addi add j
--- rom_words(0£©= x"00100093"  the instruction at the 1st address is x"00100093" (addi x1, x0, 1)
--- rom_words(1£©= x"00200113" the instruction at the 2nd address is x"00200113" (addi x2, x0, 2)
--- rom_words(2£©= x"002080b3" the instruction at the 3rd address is x"002080b3" (add x1, x1, x2)
--- rom_words(3£©= x"ffdff06f" the instruction at the 4th address is x"ffdff06f" (j loop)
+-- rom_words(0??= x"00100093"  the instruction at the 1st address is x"00100093" (addi x1, x0, 1)
+-- rom_words(1??= x"00200113" the instruction at the 2nd address is x"00200113" (addi x2, x0, 2)
+-- rom_words(2??= x"002080b3" the instruction at the 3rd address is x"002080b3" (add x1, x1, x2)
+-- rom_words(3??= x"ffdff06f" the instruction at the 4th address is x"ffdff06f" (j loop)
 --signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
 signal rom_words: instr_rom := instr_rom_readfile("main.mem");
+
+signal a : std_logic_vector(31 downto 0) :=  "00000001000000000000000000000000";
+signal b : std_logic_vector(31 downto 0) :=  "00000001000000000000100000000000";
+
+
 begin
 -- ROM_LENGTH_BITS = 2048 = 2^11 
 -- Address Translation divide by 4
@@ -73,7 +77,7 @@ process(clk, rst) begin
       elsif (clk'event and clk = '1') then 
           -- to_integer(unsigned(addr_word)) = 0, 1, 2, 3
           if(imemR = '1') then
-              if(unsigned(x"01000000") < unsigned(addr) and unsigned(addr) < unsigned(x"01000800")) then
+              if((unsigned(a) < unsigned(addr)) and (unsigned(addr) < unsigned(b))) then
                   if(addr(1 downto 0) /= "00") then word <= x"00000073"; -- halt instr
                   else word <= rom_words(to_integer(unsigned(addr(12 downto 2))));
                   end if;
