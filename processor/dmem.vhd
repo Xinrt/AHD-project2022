@@ -59,8 +59,9 @@ signal byte: std_logic_vector(1 downto 0);  -- byte selection
 signal word: std_logic_vector(31 downto 0); -- word at given address
 signal data_out: std_logic_vector(31 downto 0);                     -- read result
 --signal ram_word: ram;       -- store the written input (element in the array)
-signal bound: std_logic:= '0';
-
+signal bound: std_logic:= '0';  -- out of bound signal
+signal lower_bound : std_logic_vector(31 downto 0) :=  x"80000000"; -- memory start address
+signal upper_bound : std_logic_vector(31 downto 0) :=  x"80001000"; -- memory end address
 -- three special read-only memory-mapped values at addresses 0x00100000, 0x00100004, 0x00100008
 signal N1: std_logic_vector(31 downto 0) := x"00B6E933";  -- N number of Qing Xiang
 signal N2: std_logic_vector(31 downto 0) := x"011EB84B";  -- N number of Xiao Ding
@@ -105,7 +106,7 @@ begin
                 data_out <= LED;
             when others =>
             -- addr > 0x80000000
-            if(unsigned(x"80000000") < unsigned(addr) and unsigned(addr) < unsigned(x"80001000")) then  -- read 4KB memory
+            if(unsigned(lower_bound) < unsigned(addr) and unsigned(addr) < unsigned(upper_bound)) then  -- read 4KB memory
                 addr_word <= to_integer(unsigned(addr(11 downto 2)));
                 word <= ram_words(addr_word);
                 byte <= addr(1 downto 0);
@@ -184,7 +185,7 @@ begin
             data_out <= x"00000000";
             if(addr = x"00100014") then  -- write LEDs
                 LED <= din;
-            elsif(unsigned(x"80000000") < unsigned(addr) and unsigned(addr) < unsigned(x"80001000")) then  -- write 4KB memory
+            elsif(unsigned(lower_bound) < unsigned(addr) and unsigned(addr) < unsigned(upper_bound)) then  -- write 4KB memory
                 addr_word <= to_integer(unsigned(addr(11 downto 2)));
                 word <= ram_words(addr_word);
                 byte <= addr(1 downto 0);
