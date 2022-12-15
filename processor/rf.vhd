@@ -1,3 +1,24 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 2022/11/15 20:16:24
+-- Design Name: 
+-- Module Name: Register_File - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.STD_LOGIC_ARITH.ALL;
@@ -18,7 +39,10 @@ entity rf is
           -- the data that will be written in registers or read out from registers
           din  : in STD_LOGIC_VECTOR (31 DOWNTO 0);
           dout1 : out STD_LOGIC_VECTOR (31 DOWNTO 0) := "00000000000000000000000000000000";
-          dout2 : out STD_LOGIC_VECTOR (31 DOWNTO 0) := "00000000000000000000000000000000"
+          dout2 : out STD_LOGIC_VECTOR (31 DOWNTO 0) := "00000000000000000000000000000000";
+          
+          -- the output register file, including 32 registers
+          registers_out : out register_array
     );
 end rf;
 
@@ -79,5 +103,6 @@ begin
             
         end if;
     end process;
+    registers_out <= registers_32;
     
 end Behavioral;
