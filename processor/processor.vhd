@@ -136,7 +136,7 @@ begin
     with brmux select pcin <= pcout + b"100" when '0', aludout when '1';
     with src1mux select op1 <= rfdout1 when '0', pcout when '1';
     with src2mux select op2 <= rfdout2 when '0', imm when '1';
-    with wbmux select rfdin <= pcout + b"100" when b"00", dmemdout when b"01", aludout when b"10", x"0" when others; 
+    with wbmux select rfdin <= pcout + b"100" when b"00", dmemdout when b"01", aludout when b"10", x"00000000" when others; 
     --component mappings
     control0: control
         port map(
