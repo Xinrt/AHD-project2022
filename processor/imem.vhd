@@ -11,7 +11,6 @@ entity imem is
     rst: in std_logic;    -- asynchronous reset signal
     imemR: in std_logic;     -- imemRead enable signal
     addr: in std_logic_vector(31 downto 0);       -- 32-bit byte addressed pc address input
-    rom_words_in: in instr_rom;                   -- input program
     instr: out std_logic_vector(31 downto 0)      -- 32-bit instruction value output
   );
 end imem;
