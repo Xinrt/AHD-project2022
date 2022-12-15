@@ -74,12 +74,12 @@ process(clk, rst) begin
           -- to_integer(unsigned(addr_word)) = 0, 1, 2, 3
           if(imemR = '1') then
               if(unsigned(x"01000000") < unsigned(addr) and unsigned(addr) < unsigned(x"01000800")) then
-                  if(addr(1 downto 0) /= "00") then word <= x"00000073" -- halt instr
+                  if(addr(1 downto 0) /= "00") then word <= x"00000073"; -- halt instr
                   else word <= rom_words(to_integer(unsigned(addr(12 downto 2))));
                   end if;
-              else word <= x"00000073" -- halt instr
+              else word <= x"00000073"; -- halt instr
               end if;
-          else word <= x"00000000"
+          else word <= x"00000000";
           end if;
       end if;
 end process;
