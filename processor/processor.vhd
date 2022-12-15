@@ -8,6 +8,7 @@ entity processor is
   Port (clk0: in std_logic;    --clock signal
         rst0: in std_logic;    --asynchronous reset signal
         en0: in std_logic;     --global enable signal
+        sw: in std_logic_vector(16 downto 0);  --input switches
         regfile: out reg_32   --output register file
         );
 end processor;
@@ -109,6 +110,7 @@ architecture Behavioral of processor is
             dmemRW: in std_logic_vector (1 downto 0);
             func3: in std_logic_vector(2 downto 0);
             addr: in std_logic_vector(31 downto 0);
+            sw0: in std_logic_vector(16 downto 0);
             din: in std_logic_vector(31 downto 0);
             dout: out std_logic_vector(31 downto 0);
             outofbound: out std_logic
@@ -204,6 +206,7 @@ begin
             dmemRW => dmemRW0,
             func3 => func,
             addr => aludout,
+            sw0 => sw,
             din => rfdout2,
             dout => dmemdout,
             outofbound => haltmux
