@@ -105,66 +105,68 @@ begin
                 data_out <= LED;
             when others =>
             -- addr > 0x80000000
-              if(unsigned(x"80000000") < unsigned(addr) and unsigned(addr) < unsigned(x"80001000")) then  -- read 4KB memory
-                  addr_word <= to_integer(unsigned(addr(11 downto 2)));
-                  word <= ram_words(addr_word);
-                  byte <= addr(1 downto 0);
-                  case func3 is
-                  when "000" => -- LB
-                      if(byte = "00") then
-                          if(word(31) = '1') data_out <= x"111111" & word(31 downto 24);
-                          else data_out <= x"000000" & word(31 downto 24);
-                          end if;
-                      elsif(byte = "01") then
-                          if(word(23) = '1') data_out <= x"111111" & word(23 downto 16);
-                          else data_out <= x"000000" & word(23 downto 16);
-                          end if;
-                      elsif(byte = "10") then
-                          if(word(15) = '1') data_out <= x"111111" & word(15 downto 8);
-                          else data_out <= x"000000" & word(15 downto 8);
-                          end if;
-                      else
-                        if(word(7) = '1') data_out <= x"111111" & word(7 downto 0);
-                        else data_out <= x"000000" & word(7 downto 0);
+            if(unsigned(x"80000000") < unsigned(addr) and unsigned(addr) < unsigned(x"80001000")) then  -- read 4KB memory
+                addr_word <= to_integer(unsigned(addr(11 downto 2)));
+                word <= ram_words(addr_word);
+                byte <= addr(1 downto 0);
+                case func3 is
+                when "000" => -- LB
+                    if(byte = "00") then
+                        if(word(31) = '1') data_out <= x"111111" & word(31 downto 24);
+                        else data_out <= x"000000" & word(31 downto 24);
                         end if;
-                      end if;
-                  when "001" => -- LH
-                      if(byte = "00") then
-                          if(word(31) = '1') data_out <= x"1111" & word(31 downto 16);
-                          else data_out <= x"0000" & word(31 downto 16);
-                          end if;
-                      elsif(byte = "10") then
-                          if(word(15) = '1') data_out <= x"1111" & word(15 downto 0);
-                          else data_out <= x"0000" & word(15 downto 0);
-                          end if;
-                      else
-                          data_out <= x"00000000"
-                          bound <= 1;
-                      end if;
-                  when "010" => -- LW
-                      if(byte = "00") then data_out <= word;
-                      else
-                          data_out <= x"00000000";
-                          bound <= 1;
-                      end if;
-                  when "100" => -- LBU
-                      if(byte = "00") then data_out <= x"000000" & word(31 downto 24);
-                      elsif(byte = "01") then data_out <= x"000000" & word(23 downto 16);
-                      elsif(byte = "10") then data_out <= x"000000" & word(15 downto 8);
+                    elsif(byte = "01") then
+                        if(word(23) = '1') data_out <= x"111111" & word(23 downto 16);
+                        else data_out <= x"000000" & word(23 downto 16);
+                        end if;
+                    elsif(byte = "10") then
+                        if(word(15) = '1') data_out <= x"111111" & word(15 downto 8);
+                        else data_out <= x"000000" & word(15 downto 8);
+                        end if;
+                    else
+                      if(word(7) = '1') data_out <= x"111111" & word(7 downto 0);
                       else data_out <= x"000000" & word(7 downto 0);
                       end if;
-                  when "101" => -- LHU
-                      if(byte = "00") then data_out <= x"0000" & word(31 downto 16);
-                      elsif(byte = "10") then data_out <= x"0000" & word(15 downto 0);
-                      else
-                          data_out <= x"00000000"
-                          bound <= 1;
-                      end if;
-                  when others => null;
-              else  
-                  data_out <= x"00000000";
-                  bound <= 1;
-              end if;
+                    end if;
+                when "001" => -- LH
+                    if(byte = "00") then
+                        if(word(31) = '1') data_out <= x"1111" & word(31 downto 16);
+                        else data_out <= x"0000" & word(31 downto 16);
+                        end if;
+                    elsif(byte = "10") then
+                        if(word(15) = '1') data_out <= x"1111" & word(15 downto 0);
+                        else data_out <= x"0000" & word(15 downto 0);
+                        end if;
+                    else
+                        data_out <= x"00000000"
+                        bound <= 1;
+                    end if;
+                when "010" => -- LW
+                    if(byte = "00") then data_out <= word;
+                    else
+                        data_out <= x"00000000";
+                        bound <= 1;
+                    end if;
+                when "100" => -- LBU
+                    if(byte = "00") then data_out <= x"000000" & word(31 downto 24);
+                    elsif(byte = "01") then data_out <= x"000000" & word(23 downto 16);
+                    elsif(byte = "10") then data_out <= x"000000" & word(15 downto 8);
+                    else data_out <= x"000000" & word(7 downto 0);
+                    end if;
+                when "101" => -- LHU
+                    if(byte = "00") then data_out <= x"0000" & word(31 downto 16);
+                    elsif(byte = "10") then data_out <= x"0000" & word(15 downto 0);
+                    else
+                        data_out <= x"00000000"
+                        bound <= 1;
+                    end if;
+                when others => null;
+                end case;
+            else  
+                data_out <= x"00000000";
+                bound <= 1;
+            end if;
+            end case;
         elsif(dmemRW = "10") then
         -- write
             data_out <= x"00000000";
@@ -190,6 +192,7 @@ begin
                     else bound <= '1';
                     end if;
                 when others => null;
+                end case;
             else
                 bound <= '1';
             end if;
