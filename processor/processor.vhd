@@ -132,10 +132,10 @@ begin
     --multiplexers
     brmux <= brctrl and alubr;
     func <= instr0(14 downto 12);
-    with haltmux select opcode0 <= instr0(6 downto 0) when '0', b"1110011" when '1';
-    with brmux select pcin <= pcout + b"100" when '0', aludout when '1';
-    with src1mux select op1 <= rfdout1 when '0', pcout when '1';
-    with src2mux select op2 <= rfdout2 when '0', imm when '1';
+    with haltmux select opcode0 <= instr0(6 downto 0) when '0', b"1110011" when '1', "0000000" when others;
+    with brmux select pcin <= pcout + b"100" when '0', aludout when '1', x"00000000" when others;
+    with src1mux select op1 <= rfdout1 when '0', pcout when '1', x"00000000" when others;
+    with src2mux select op2 <= rfdout2 when '0', imm when '1', x"00000000" when others;
     with wbmux select rfdin <= pcout + b"100" when b"00", dmemdout when b"01", aludout when b"10", x"00000000" when others; 
     --component mappings
     control0: control
