@@ -40,8 +40,9 @@ entity dmem is
     clk: in std_logic;    -- clock signal
     rst: in std_logic;    -- asynchronous reset signal
     dmemRW: in std_logic_vector(1 downto 0);        -- dmemRead/Write 00 01 10
-    w_en: in std_logic_vector(3 downto 0);          -- write enable
-    addr: in std_logic_vector(31 downto 0);         -- input address
+    func3: in std_logic_vector(2 downto 0);         -- func3
+    addr: in std_logic_vector(31 downto 0);         -- input address (byte)
+    sw0: in std_logic_vector(16 downto 0);           -- input switches
     din: in std_logic_vector(31 downto 0);          -- input data
     dout: out std_logic_vector(31 downto 0);        -- output data
     outofbound: out std_logic                       -- address out of bound signal
@@ -51,73 +52,167 @@ end dmem;
 architecture Behavioral of dmem is
 -- Data Memory Size (4KB or 1024 Words)
 -- RAM_LENGTH_WORDS = 1024
-type ram is array(0 to 1024-1) of std_logic_vector(31 downto 0);
-signal ram_words: ram :=  (x"00000000", others => (others =>'0'));
-signal addr_word: std_logic_vector(31 downto 0) := x"00000000";   -- 32-bit word addressed pc address input
-signal addr0: std_logic_vector(31 downto 0) := x"80000000";
-signal data_out: std_logic_vector(31 downto 0);
-signal ram_word: ram;       -- store the written input
-signal bound: std_logic;
+type ram is array(0 to 1023) of std_logic_vector(31 downto 0);
+signal ram_words: ram :=  (x"00000000", others => (others =>'0'));  -- dmem array 
+signal addr_word: integer;   -- 32-bit word addressed pc address input
+signal byte: std_logic_vector(1 downto 0);  -- byte selection
+signal word: std_logic_vector(31 downto 0); -- word at given address
+signal data_out: std_logic_vector(31 downto 0);                     -- read result
+--signal ram_word: ram;       -- store the written input (element in the array)
+signal bound: std_logic:= '0';
+
+-- three special read-only memory-mapped values at addresses 0x00100000, 0x00100004, 0x00100008
+signal N1: std_logic_vector(31 downto 0) := x"00B6E933";  -- N number of Qing Xiang
+signal N2: std_logic_vector(31 downto 0) := x"011EB84B";  -- N number of Xiao Ding
+signal N3: std_logic_vector(31 downto 0) := x"009C8351";  -- N number of Xinran Tang
+signal SW: std_logic_vector(31 downto 0) := x"00000000";  -- switches
+signal LED: std_logic_vector(31 downto 0) := x"00000000"; -- LEDs
 
 begin
 -- RAM_LENGTH_BITS = 4096 = 2^12 
 -- Address Translation divide by 4
 -- RAM_ADDR_BITS = 12
-addr_word(12-3 downto 0) <= addr(12-1 downto 2);
+-- size of addr_word=10
+-- e.g. input 0000 0004 -> translate to -> 0000 0001
+-- addr_word(9 downto 0) <= addr(11 downto 2);
  
 process(clk, rst) 
 variable temp: ram:=  (others => (others =>'0')); 
 begin
     if (rst = '1') then       -- resets
         report "reset ";
-        data_out <= x"00000001";
+        ram_words <=  (x"00000000", others => (others =>'0'));  -- clear the array
+        LED <= x"00000000";
+        SW <= x"00000000"; 
+        data_out <= x"00000000";                                -- output the read data 0
         bound <= '0';
     elsif (clk'event and clk = '1') then           
         -- size of word addressed addresses is 1024
-        if (addr_word < 1024) then
-        -- 0x00100000 = 100000000000000000000 (21 bits)
-        -- if the 21st bit of the address input is 1
-        -- implement special read-only memory-mapped values at addresses 0x00100000, 0x00100004, 0x00100008
+        SW <= x"0000" & sw0; -- store switches
+        if(dmemRW = "01") then
         -- read
-            if (addr(20)='1' and dmemRW = "01") then
-                
-                if(to_integer(unsigned(addr_word)) = 0) then
-                    data_out <= x"11987251";       -- N number of Qing Xiang
-                elsif(to_integer(unsigned(addr_word)) = 1) then
-                    data_out <= x"18790475";       -- N number of Xiao Ding
-                elsif(to_integer(unsigned(addr_word)) = 2) then
-                    data_out <= x"10257233";       -- N number of Xinran Tang
-                end if;
-           
-        
-            else 
-            -- write
-            -- using 4 interleaved sets of 8-bit (1 byte) wide memories
-                if(dmemRW = "10") then
-                    if(w_en(0)='1') then
-                        temp(to_integer(unsigned(addr_word)))(7 downto 0) := din(7 downto 0); end if;
-                    if(w_en(1)='1') then
-                        temp(to_integer(unsigned(addr_word)))(15 downto 8) := din(15 downto 8); end if;
-                    if(w_en(2)='1') then
-                        temp(to_integer(unsigned(addr_word)))(23 downto 16) := din(23 downto 16); end if;
-                    if(w_en(3)='1') then
-                        temp(to_integer(unsigned(addr_word)))(31 downto 24) := din(31 downto 24); end if;
-            
-    --                data_out <= temp(to_integer(unsigned(addr_word)));
-                    ram_word(to_integer(unsigned(addr_word))) <= temp(to_integer(unsigned(addr_word)));
-                    report "The value of 'ram word' is " & integer'image(to_integer(unsigned(ram_word(to_integer(unsigned(addr_word))))));
-                    data_out <= x"00000000";
-    --                data_out <= ram_word(to_integer(unsigned(addr_word)));
-                    report "The value of 'data out' is " & integer'image(to_integer(unsigned(data_out)));
-                    temp := (others => (others =>'0')); 
-                else
-                    data_out <= x"00000000";
-                end if;
+            -- 0x00100000 - 0x80000000
+            case addr is
+            when x"00100000" =>
+                data_out <= N1;
+            when x"00100004" =>
+                data_out <= N2;
+            when x"00100008" =>
+                data_out <= N3;
+            when x"00100010" =>
+                data_out <= SW;
+            when x"00100014" =>
+                data_out <= LED;
+            when others =>
+            -- addr > 0x80000000
+            if(unsigned(x"80000000") < unsigned(addr) and unsigned(addr) < unsigned(x"80001000")) then  -- read 4KB memory
+                addr_word <= to_integer(unsigned(addr(11 downto 2)));
+                word <= ram_words(addr_word);
+                byte <= addr(1 downto 0);
+                case func3 is
+                when "000" => -- LB
+                    if(byte = "00") then
+                        if(word(31) = '1') then 
+                            data_out <= x"111111" & word(31 downto 24);
+                        else 
+                            data_out <= x"000000" & word(31 downto 24);
+                        end if;
+                    elsif(byte = "01") then
+                        if(word(23) = '1') then
+                            data_out <= x"111111" & word(23 downto 16);
+                        else 
+                            data_out <= x"000000" & word(23 downto 16);
+                        end if;
+                    elsif(byte = "10") then
+                        if(word(15) = '1') then
+                            data_out <= x"111111" & word(15 downto 8);
+                        else 
+                            data_out <= x"000000" & word(15 downto 8);
+                        end if;
+                    else
+                        if(word(7) = '1') then
+                            data_out <= x"111111" & word(7 downto 0);
+                        else 
+                            data_out <= x"000000" & word(7 downto 0);
+                        end if;
+                    end if;
+                when "001" => -- LH
+                    if(byte = "00") then
+                        if(word(31) = '1') then
+                            data_out <= x"1111" & word(31 downto 16);
+                        else 
+                            data_out <= x"0000" & word(31 downto 16);
+                        end if;
+                    elsif(byte = "10") then
+                        if(word(15) = '1') then
+                            data_out <= x"1111" & word(15 downto 0);
+                        else 
+                            data_out <= x"0000" & word(15 downto 0);
+                        end if;
+                    else
+                        data_out <= x"00000000";
+                        bound <= '1';
+                    end if;
+                when "010" => -- LW
+                    if(byte = "00") then data_out <= word;
+                    else
+                        data_out <= x"00000000";
+                        bound <= '1';
+                    end if;
+                when "100" => -- LBU
+                    if(byte = "00") then data_out <= x"000000" & word(31 downto 24);
+                    elsif(byte = "01") then data_out <= x"000000" & word(23 downto 16);
+                    elsif(byte = "10") then data_out <= x"000000" & word(15 downto 8);
+                    else data_out <= x"000000" & word(7 downto 0);
+                    end if;
+                when "101" => -- LHU
+                    if(byte = "00") then data_out <= x"0000" & word(31 downto 16);
+                    elsif(byte = "10") then data_out <= x"0000" & word(15 downto 0);
+                    else
+                        data_out <= x"00000000";
+                        bound <= '1';
+                    end if;
+                when others => null;
+                end case;
+            else  
+                data_out <= x"00000000";
+                bound <= '1';
+            end if;
+            end case;
+        elsif(dmemRW = "10") then
+        -- write
+            data_out <= x"00000000";
+            if(addr = x"00100014") then  -- write LEDs
+                LED <= din;
+            elsif(unsigned(x"80000000") < unsigned(addr) and unsigned(addr) < unsigned(x"80001000")) then  -- write 4KB memory
+                addr_word <= to_integer(unsigned(addr(11 downto 2)));
+                word <= ram_words(addr_word);
+                byte <= addr(1 downto 0);
+                case func3 is
+                when "000" => -- SB
+                    if(byte = "00") then ram_words(addr_word) <= din(7 downto 0) & word(23 downto 0);
+                    elsif(byte = "01") then ram_words(addr_word) <= word(31 downto 24) & din(7 downto 0) & word(15 downto 0);
+                    elsif(byte = "10") then ram_words(addr_word) <= word(31 downto 16) & din(7 downto 0) & word(7 downto 0);
+                    else ram_words(addr_word) <= word(31 downto 8) & din(7 downto 0);
+                    end if;
+                when "001" => -- SH
+                    if(byte = "00") then ram_words(addr_word) <= din(15 downto 0) & word(15 downto 0);
+                    elsif(byte = "10") then ram_words(addr_word) <= word(31 downto 16) & din(15 downto 0);
+                    else bound <= '1';
+                    end if;
+                when "010" => -- SW
+                    if(byte = "00") then ram_words(addr_word) <= din;
+                    else bound <= '1';
+                    end if;
+                when others => null;
+                end case;
+            else
+                bound <= '1';
             end if;
         else
             data_out <= x"00000000";
-            bound <= '1';
-        end if;    
+            bound <= '0';
+        end if;
     end if;
 end process;
 
