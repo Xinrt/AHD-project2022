@@ -1,11 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.std_logic_unsigned.ALL;
-
---package reg_32_pkg is
---    type reg_32 is array(31 DOWNTO 0) of STD_LOGIC_VECTOR(31 DOWNTO 0);
---end package;
-
 use work.reg_32_pkg.all;
 
 
