@@ -20,7 +20,7 @@ entity imem is
     rst: in std_logic;    -- asynchronous reset signal
     imemR: in std_logic;     -- imemRead enable signal
     addr: in std_logic_vector(31 downto 0);      -- 32-bit byte addressed pc address input
-    rom_words_in: instr_rom;            -- input program
+    rom_words_in: in instr_rom;            -- input program
     instr: out std_logic_vector(31 downto 0)      -- 32-bit instruction value output
   );
 end imem;
@@ -38,10 +38,10 @@ architecture Behavioral of imem is
 signal addr_word: std_logic_vector(31 downto 0) := x"00000000";   -- 32-bit word addressed pc address input
 
 -- store addi addi add j
--- rom_words(0£©= x"00100093"  the instruction at the 1st address is x"00100093" (addi x1, x0, 1)
--- rom_words(1£©= x"00200113" the instruction at the 2nd address is x"00200113" (addi x2, x0, 2)
--- rom_words(2£©= x"002080b3" the instruction at the 3rd address is x"002080b3" (add x1, x1, x2)
--- rom_words(3£©= x"ffdff06f" the instruction at the 4th address is x"ffdff06f" (j loop)
+-- rom_words(0Â£Â©= x"00100093"  the instruction at the 1st address is x"00100093" (addi x1, x0, 1)
+-- rom_words(1Â£Â©= x"00200113" the instruction at the 2nd address is x"00200113" (addi x2, x0, 2)
+-- rom_words(2Â£Â©= x"002080b3" the instruction at the 3rd address is x"002080b3" (add x1, x1, x2)
+-- rom_words(3Â£Â©= x"ffdff06f" the instruction at the 4th address is x"ffdff06f" (j loop)
 --signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
 --signal rom_words: instr_rom := instr_rom_readfile("main.mem");
 
