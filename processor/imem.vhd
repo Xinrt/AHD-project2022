@@ -51,8 +51,8 @@ signal addr_word: std_logic_vector(31 downto 0);  -- 32-bit word addressed pc ad
 --signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
 signal rom_words: instr_rom := instr_rom_readfile("main.mem");
 
-signal lower_bound : std_logic_vector(31 downto 0) :=  x"01000000";
-signal upper_bound : std_logic_vector(31 downto 0) :=  x"01000800";
+signal lower_bound : std_logic_vector(31 downto 0) :=  x"01000000"; -- memory start address
+signal upper_bound : std_logic_vector(31 downto 0) :=  x"01000800"; -- memory end address
 
 
 begin
