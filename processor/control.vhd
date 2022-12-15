@@ -5,7 +5,6 @@ entity control is
   Port (clk: in std_logic;    --clock signal
         rst: in std_logic;    --asynchronous reset signal
         en: in std_logic;     --global enable signal
-        outofbound: in std_logic;     --dmem address out of bound signal
         opcode: in std_logic_vector (6 downto 0);   --7-bit opcode
         br: out std_logic;                          --1-bit branch control signal
         dmemRW: out std_logic_vector (1 downto 0);  --2-bit read or write data memory control signal
@@ -52,7 +51,7 @@ process(opcode) begin
     ALUsrc1t <= '0';
     ALUsrc2t <= '0';
     regRWt <= b"00";
-    halt <= outofbound;
+    halt <= '0';
     
     case opcode is
     when "0110111" =>   --LUI
