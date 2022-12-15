@@ -182,6 +182,7 @@ begin
                     elsif(byte = "01") then ram_words(addr_word) <= word(31 downto 24) & din(7 downto 0) & word(15 downto 0);
                     elsif(byte = "10") then ram_words(addr_word) <= word(31 downto 16) & din(7 downto 0) & word(7 downto 0);
                     else ram_words(addr_word) <= word(31 downto 8) & din(7 downto 0);
+                    end if;
                 when "001" => -- SH
                     if(byte = "00") then ram_words(addr_word) <= din(15 downto 0) & word(15 downto 0);
                     elsif(byte = "10") then ram_words(addr_word) <= word(31 downto 16) & din(15 downto 0);
