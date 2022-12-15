@@ -28,15 +28,17 @@ module dmem_tb();
     reg  [31:0] t_addr;
     reg  [31:0] t_din;
     wire [31:0] t_dout;
+    wire t_outofbound;
     
     dmem dut(
         .clk(t_clk),
         .rst(t_rst),
-        .en(t_en),
+        .dmemRW(t_en),
         .w_en(t_we),
         .addr(t_addr),
         .din(t_din),
-        .dout(t_dout)
+        .dout(t_dout),
+        .outofbound(t_outofbound)
     );
     
     initial begin
@@ -59,14 +61,14 @@ module dmem_tb();
         
         // test initial reset
         $display(t_dout);
-        if(t_dout != 32'h00000001) begin
+        if(t_dout != 32'h00000000) begin
             $display("Incorrect initial reset");
             $stop;
         end
      
         #5;
         t_rst=1'b0;
-        t_en = 2'b10;
+        t_en = 2'b01;
         t_we=4'b0001;
         t_addr=32'h80000000;
         #5;
@@ -77,7 +79,7 @@ module dmem_tb();
         
         #5
         t_rst=1'b0;
-        t_en = 2'b10;
+        t_en = 2'b01;
         t_we=4'b0010;
         t_addr=32'h80000000;
         #5;
@@ -88,7 +90,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
-        t_en = 2'b10;
+        t_en = 2'b01;
         t_we=4'b0100;
         t_addr=32'h80000000;
         #5;
@@ -99,7 +101,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
-        t_en = 2'b10;
+        t_en = 2'b01;
         t_we=4'b1000;
         t_addr=32'h80000000;
         #5;
@@ -110,7 +112,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
-        t_en = 2'b10;
+        t_en = 2'b01;
         t_we=4'b0011;
         t_addr=32'h80000000;
         #5;
@@ -121,7 +123,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
-        t_en = 2'b01;
+        t_en = 2'b10;
         t_we=4'b0011;
         t_addr=32'h00100000;
         #5;
@@ -132,7 +134,7 @@ module dmem_tb();
 
         #5;      
         t_rst=1'b0;
-        t_en = 2'b01;
+        t_en = 2'b10;
         t_we=4'b0011;
         t_addr=32'h00100004;
         #5;
@@ -143,7 +145,7 @@ module dmem_tb();
         
         #5;      
         t_rst=1'b0;
-        t_en = 2'b01;
+        t_en = 2'b10;
         t_we=4'b0011;
         t_addr=32'h00100008;
         #5;
