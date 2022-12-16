@@ -49,6 +49,7 @@ entity dmem is
     sw0: in std_logic_vector(15 downto 0);           -- input switches
     din: in std_logic_vector(31 downto 0);          -- input data
     dout: out std_logic_vector(31 downto 0);        -- output data
+    ledOut: out std_logic_vector(15 downto 0);        -- output LED
     outofbound: out std_logic                       -- address out of bound signal
   );
 end dmem;
@@ -190,5 +191,6 @@ begin
 end process;
 
 dout <= data_out;
+ledOut <= LED(15 downto 0);
 outofbound <= bound;
 end Behavioral;

@@ -9,6 +9,7 @@ entity processor is
         rst0: in std_logic;    --asynchronous reset signal
         en0: in std_logic;     --global enable signal
         sw: in std_logic_vector(15 downto 0);  --input switches
+        led: out std_logic_vector(15 downto 0);  --output leds
         regfile: out reg_32   --output register file
         );
 end processor;
@@ -116,6 +117,7 @@ architecture Behavioral of processor is
             sw0: in std_logic_vector(15 downto 0);
             din: in std_logic_vector(31 downto 0);
             dout: out std_logic_vector(31 downto 0);
+            ledOut: out std_logic_vector(15 downto 0);
             outofbound: out std_logic
         );
     end component;
@@ -213,6 +215,7 @@ begin
             sw0 => sw,
             din => rfdout2,
             dout => dmemdout,
+            ledOut => led,
             outofbound => haltmux
         );
 regfile <= reg_out0;
