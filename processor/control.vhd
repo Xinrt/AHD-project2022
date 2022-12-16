@@ -20,7 +20,8 @@ entity control is
         ALUsrc2: out std_logic;                     --1-bit ALU input source2 control signal
         regRW: out std_logic_vector (1 downto 0);   --1-bit write back to register control signal
         pcW: out std_logic;                         --1-bit write pc control signal
-        imemR: out std_logic                        --1-bit read instruction memory control signal
+        imemR: out std_logic;                        --1-bit read instruction memory control signal
+        jump : out std_logic
         );
 end control;
 
@@ -33,7 +34,7 @@ architecture Behavioral of control is
     signal ALUsrc1t: std_logic;                     
     signal ALUsrc2t: std_logic;                     
     signal regRWt: std_logic_vector (1 downto 0);  
-    signal opcodet : std_logic_vector (6 downto 0);
+    signal jumpt : std_logic;
     
 --    signal nop: std_logic;  --nop signal 
     signal halt: std_logic; --halt signal                   
@@ -60,7 +61,7 @@ begin
 --Calculate control signals based on opcode
 process(opcode) begin
     --set temporary control signals to default values
-    opcodet <= opcode;
+    --opcodet <= opcode;
     
     brt <= '0';
     dmemRWt <= b"00";
@@ -70,6 +71,7 @@ process(opcode) begin
     ALUsrc2t <= '0';
     regRWt <= b"00";
     halt <= '0';
+    jumpt <= '0';
     
     case opcode is
     when "0110111" =>   --LUI
@@ -82,14 +84,14 @@ process(opcode) begin
         ALUsrc2t <= '1';
         regRWt <= b"10";
     when "1101111" =>   --JAL
-        brt <= '1';
+        jumpt <= '1';
         ALUsrc1t <= '1';
         ALUsrc2t <= '1';
         regRWt <= b"10";
     when "1100111" =>   --JALR
-        brt <= '1';
         ALUsrc2t <= '1';
-        regRWt <= b"10";
+        regRWt <= b"11";
+        jumpt <= '1';
     when "1100011" =>   --branch
         brt <= '1';
         ALUOpt <= b"01";
@@ -132,6 +134,8 @@ process(stage) begin
     pcW <= '0';
     imemR <= '0';
     next_stage <= HLT;
+    jump <= '0';
+    
     case stage is
     
     when INI =>
@@ -139,18 +143,23 @@ process(stage) begin
     
     when IFE =>
         imemR <= '1';   --activate fetching instruction from IMEM
-        next_stage <= EXE;
-       
---    when IDE =>
---        --opcodet <= opcode;
---        next_stage <= EXE;
-   
+        if halt = '0' then
+            next_stage <= IDE;
+        end if;
+        
+    when IDE =>
+        --opcodet <= opcode;
+        if halt = '0' then
+            next_stage <= EXE;
+        end if;   
+        
     when EXE =>
         regRW <= '0' & regRWt(0);   --activate reading data from RF
         ALUOp <= ALUOpt;    --select operation type for ALU
         ALUsrc1 <= ALUsrc1t;    --select ALU src1
         ALUsrc2 <= ALUsrc2t;    --select ALU src2
         br <= brt;  --control branch
+        jump <= jumpt;
         if halt = '0' then
             if dmemRWt = b"00" then next_stage <= WB;   --skip memory access stage if not load/store
             else next_stage <= MEM;
@@ -162,12 +171,16 @@ process(stage) begin
 
     when MEM =>
         dmemRW <= dmemRWt;  --activate memory read/write
-        
+        regRW <= '0' & regRWt(0);   --activate reading data from RF
         ALUOp <= ALUOpt;    --select operation type for ALU
         ALUsrc1 <= ALUsrc1t;    --select ALU src1
         ALUsrc2 <= ALUsrc2t;    --select ALU src2   
-             
-        next_stage <= WB;
+        br <= brt;  --control branch
+        jump <= jumpt;
+        if halt = '0' then
+            next_stage <= WB;
+        end if;   
+                
     when WB =>
         dmem2Reg <= dmem2Regt;  --select write back data
         pcW <= '1'; --activate PC update
@@ -176,8 +189,13 @@ process(stage) begin
         ALUOp <= ALUOpt;    --select operation type for ALU
         ALUsrc1 <= ALUsrc1t;    --select ALU src1
         ALUsrc2 <= ALUsrc2t;    --select ALU src2
+        br <= brt;  --control branch
+        jump <= jumpt;
         
-        next_stage <= IFE;
+        if halt = '0' then
+            next_stage <= IFE;
+        end if;   
+
     when HLT =>
         next_stage <= HLT;
     when others => null;  --stay halted
