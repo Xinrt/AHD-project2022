@@ -49,7 +49,7 @@ signal addr_word: std_logic_vector(31 downto 0);  -- 32-bit word addressed pc ad
 -- rom_words(2??= x"002080b3" the instruction at the 3rd address is x"002080b3" (add x1, x1, x2)
 -- rom_words(3??= x"ffdff06f" the instruction at the 4th address is x"ffdff06f" (j loop)
 --signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
-signal rom_words: instr_rom := instr_rom_readfile("main1.mem");
+signal rom_words: instr_rom := instr_rom_readfile("RC5_2.mem");  -- change the names of test files
 
 signal lower_bound : std_logic_vector(31 downto 0) :=  x"00ffffff"; -- memory start address
 signal upper_bound : std_logic_vector(31 downto 0) :=  x"01000800"; -- memory end address
@@ -79,7 +79,7 @@ process(clk, rst) begin
           if(imemR = '1') then
               if((unsigned(lower_bound) < unsigned(addr)) and (unsigned(addr) < unsigned(upper_bound))) then
                   if(addr(1 downto 0) /= "00") then word <= x"00000073"; -- halt instr
-                  else word <= rom_words(to_integer(unsigned(addr(12 downto 2))));
+                  else word <= rom_words(to_integer(unsigned(addr(10 downto 2))));
                   end if;
               else word <= x"00000073"; -- halt instr
               end if;
