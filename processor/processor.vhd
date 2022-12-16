@@ -19,6 +19,8 @@ architecture Behavioral of processor is
     signal opcode0: std_logic_vector (6 downto 0);
     signal brctrl,src1mux,src2mux: std_logic;
     signal wbmux: std_logic_vector (1 downto 0);
+    signal jump0: std_logic;
+    
     component control is
         port(
             clk, rst, en: in std_logic;
@@ -31,7 +33,8 @@ architecture Behavioral of processor is
             ALUsrc2: out std_logic;                     
             regRW: out std_logic_vector (1 downto 0);   
             pcW: out std_logic;                         
-            imemR: out std_logic 
+            imemR: out std_logic; 
+            jump : out std_logic
         );
     end component;
     --Program Counter
@@ -130,7 +133,7 @@ begin
 --    end process;
 --    rstx <= rst2;
     --multiplexers
-    brmux <= brctrl and alubr;
+    brmux <= (brctrl and alubr) or jump0;
     func <= instr0(14 downto 12);
     with haltmux select opcode0 <= instr0(6 downto 0) when '0', b"1110011" when '1', "0000000" when others;
     with brmux select pcin <= pcout + b"100" when '0', aludout when '1', x"00000000" when others;
@@ -150,7 +153,8 @@ begin
             ALUsrc2 => src2mux,                     
             regRW => regRW0,  
             pcW => pcW0,                         
-            imemR => imemR0
+            imemR => imemR0,
+            jump => jump0
         );
     pc0: pc
         port map(
