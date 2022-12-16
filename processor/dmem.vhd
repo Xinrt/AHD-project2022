@@ -60,7 +60,7 @@ signal word: std_logic_vector(31 downto 0); -- word at given address
 signal data_out: std_logic_vector(31 downto 0);                     -- read result
 --signal ram_word: ram;       -- store the written input (element in the array)
 signal bound: std_logic:= '0';  -- out of bound signal
-signal lower_bound : std_logic_vector(31 downto 0) :=  x"80000000"; -- memory start address
+signal lower_bound : std_logic_vector(31 downto 0) :=  x"7fffffff"; -- memory start address
 signal upper_bound : std_logic_vector(31 downto 0) :=  x"80001000"; -- memory end address
 -- three special read-only memory-mapped values at addresses 0x00100000, 0x00100004, 0x00100008
 signal N1: std_logic_vector(31 downto 0) := x"00B6E933";  -- N number of Qing Xiang
