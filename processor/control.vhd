@@ -1,5 +1,11 @@
 library IEEE;
-use IEEE.std_logic_1164.ALL;
+use IEEE.STD_LOGIC_1164.ALL; 
+use IEEE.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
+use ieee.numeric_std.all;
+use std.textio.all;
+use ieee.std_logic_textio.all;
+
 --Multi-cycle Control Unit
 entity control is
   Port (clk: in std_logic;    --clock signal
@@ -27,21 +33,35 @@ architecture Behavioral of control is
     signal ALUsrc1t: std_logic;                     
     signal ALUsrc2t: std_logic;                     
     signal regRWt: std_logic_vector (1 downto 0);  
+    signal opcodet : std_logic_vector (6 downto 0);
     
 --    signal nop: std_logic;  --nop signal 
     signal halt: std_logic; --halt signal                   
     -- stages
-    signal stage: std_logic_vector (2 downto 0);
-    signal next_stage: std_logic_vector (2 downto 0);
+
     constant IFE: std_logic_vector (2 downto 0):= "001";    --Instruction Fetch  
-    constant EXE: std_logic_vector (2 downto 0):= "010";    --Instruction Decode and Execute
-    constant MEM: std_logic_vector (2 downto 0):= "011";    --Memory access
-    constant WB: std_logic_vector (2 downto 0):= "100";     --Write Back
+    
+    constant IDE: std_logic_vector (2 downto 0):= "010";    --Instruction Decode
+    
+    constant EXE: std_logic_vector (2 downto 0):= "011";    --Instruction Execute
+    
+    
+    
+    constant MEM: std_logic_vector (2 downto 0):= "100";    --Memory access
+    constant WB: std_logic_vector (2 downto 0):= "101";     --Write Back
     constant HLT: std_logic_vector (2 downto 0):= "000";    --Halt   
+    
+    constant INI: std_logic_vector (2 downto 0):= "111";
+    
+    signal stage: std_logic_vector (2 downto 0) := INI;
+    signal next_stage: std_logic_vector (2 downto 0);
+    
 begin
 --Calculate control signals based on opcode
 process(opcode) begin
     --set temporary control signals to default values
+    opcodet <= opcode;
+    
     brt <= '0';
     dmemRWt <= b"00";
     dmem2Regt <= b"00";
@@ -87,7 +107,7 @@ process(opcode) begin
         regRWt <= b"01";
     when "0010011" =>   --ALU immediate
         dmem2Regt <= b"10";
-        ALUOpt <= b"10";
+        ALUOpt <= b"11";
         ALUsrc2t <= '1';
         regRWt <= b"11";
     when "0110011" =>   --R-type
@@ -113,9 +133,18 @@ process(stage) begin
     imemR <= '0';
     next_stage <= HLT;
     case stage is
+    
+    when INI =>
+        next_stage <= IFE;
+    
     when IFE =>
         imemR <= '1';   --activate fetching instruction from IMEM
         next_stage <= EXE;
+       
+--    when IDE =>
+--        --opcodet <= opcode;
+--        next_stage <= EXE;
+   
     when EXE =>
         regRW <= '0' & regRWt(0);   --activate reading data from RF
         ALUOp <= ALUOpt;    --select operation type for ALU
@@ -127,13 +156,27 @@ process(stage) begin
             else next_stage <= MEM;
             end if;
         end if;
+--        report (integer'image(to_integer(unsigned(ALUOpt))));
+--        report (integer'image(to_integer(unsigned(ALUsrc1t))));
+--        report (integer'image(to_integer(unsigned(ALUsrc2t))));
+
     when MEM =>
         dmemRW <= dmemRWt;  --activate memory read/write
+        
+        ALUOp <= ALUOpt;    --select operation type for ALU
+        ALUsrc1 <= ALUsrc1t;    --select ALU src1
+        ALUsrc2 <= ALUsrc2t;    --select ALU src2   
+             
         next_stage <= WB;
     when WB =>
         dmem2Reg <= dmem2Regt;  --select write back data
         pcW <= '1'; --activate PC update
         regRW <= regRWt(1) & '0';   --activate RF write back
+        
+        ALUOp <= ALUOpt;    --select operation type for ALU
+        ALUsrc1 <= ALUsrc1t;    --select ALU src1
+        ALUsrc2 <= ALUsrc2t;    --select ALU src2
+        
         next_stage <= IFE;
     when HLT =>
         next_stage <= HLT;
