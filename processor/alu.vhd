@@ -30,7 +30,7 @@ architecture Behavioral of alu is
 begin
 process(control, operand1, operand2, din1, din2) begin
     if (control = "0000") then     -- add
-        data_out_tmp <= STD_LOGIC_VECTOR(SIGNED(operand1) + SIGNED(operand2));
+        data_out_tmp <= STD_LOGIC_VECTOR(SIGNED(operand1) + SIGNED(operand2))(31 dwonto 0);
         branch_or_not_tmp <= '0';
 
         
@@ -145,8 +145,8 @@ process(control, operand1, operand2, din1, din2) begin
         branch_or_not_tmp <= '0';
 
     
-    elsif (control = "1010") then  -- substract
-        data_out_tmp <= STD_LOGIC_VECTOR(SIGNED(operand1) - SIGNED(operand2));
+    elsif (control = "1010") then  -- SUB
+        data_out_tmp <= STD_LOGIC_VECTOR(SIGNED(operand1) - SIGNED(operand2))(31 dwonto 0);
         branch_or_not_tmp <= '0';
 
 
