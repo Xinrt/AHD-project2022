@@ -19,7 +19,7 @@ architecture Behavioral of alucontrol is
     signal ALU_Control_tmp : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
     
 begin
-process(ALUOp) begin
+process(ALUOp, func7bit2, func3) begin
     -- load/store instruction or LUI/AUIPC/JAL/JALR instruction
     if (ALUOp = "00") then
         ALU_Control_tmp <= "0000"; -- ALU use add function
@@ -34,7 +34,7 @@ process(ALUOp) begin
         -- 1110 is BLTU 
         -- 1111 is BGEU
         
-    -- I-type instruction or R-type instruction
+    -- R-type instruction
     elsif (ALUOp = "10") then
         if (func7bit2 = '0') then
             ALU_Control_tmp <= func7bit2 & func3; -- ALU Control code will be decided by funct7 and funct3
@@ -60,6 +60,15 @@ process(ALUOp) begin
         
         end if;
     
+    elsif (ALUOP = "11") then
+        ALU_Control_tmp <= '0' & func3; -- ALU Control code will be decided by funct7 and funct3
+        -- 0000 is add 
+        -- 0010 is set less than (signed) 
+        -- 0011 is set less than (unsigned) 
+        -- 0100 is XOR
+        -- 0110 is OR 
+        -- 0111 is AND
+             
     else ALU_Control_tmp <= "0000";
 
     end if;
