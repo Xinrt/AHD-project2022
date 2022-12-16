@@ -11,7 +11,7 @@ entity pc is
 end pc;
 
 architecture Behavioral of pc is
-signal addr: std_logic_vector(31 downto 0);
+signal addr: std_logic_vector(31 downto 0) := x"01000000";
 begin
 process(clk,rst) begin
     if rst = '1' then addr <= x"01000000";  --address resets to 0x01000000
