@@ -28,12 +28,14 @@ module board(
     output wire [15:0] LED
 );
 reg en,rst
-    always@(negedge btnL) rst = '1';
-    always@(posedge clock) begin
-        if (~negedge btnL and rst == '1') rst = '0';
-    always@(negedge btnR) begin
-        if(en == '1') en = '0';
-        else en = '1';
+always@(btnL) rst = 1;
+always@(posedge clock) begin
+    if (~btnL == 0 && rst == 1) rst = 0;
+end
+always@(btnR) begin
+    if(en == 1) en = 0;
+    else en = 1;
+end
     
 processor design_processor(
     .clk0(CLK100MHZ),
