@@ -203,6 +203,7 @@ int main() {
 }
 ```
 ##### corresponding RISC-V Code
+RC5_final3.mem
 ```
 addi x2 x2 -112
 sw x1 108(x2)
@@ -392,6 +393,7 @@ int main()
 }
 ```
 ##### corresponding RISC-V Code
+bubble2_new2.mem
 ```
 addi x2 x2 -80
 sw x1 76(x2)
