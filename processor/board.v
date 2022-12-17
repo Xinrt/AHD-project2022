@@ -28,7 +28,7 @@ module board(
     output wire [15:0] LED
 );
     
-processor design_proceddor(
+processor design_processor(
     .clk0(CLK100MHZ),
     .rst0(btnL),
     .en0(btnR),
