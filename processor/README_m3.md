@@ -154,9 +154,6 @@ and gives back the input plaintext after decryption.
 
 typedef unsigned long word;
 
-void rc5_encrypt(word *pt, word *ct, word *s);
-void rc5_decrypt(word *ct, word *pt, word *s);
-
 int main() {
   word s[2*(R+1)], pt[2], ct[2];
   // initialize s[] with key
@@ -175,48 +172,37 @@ int main() {
 
   pt[0]=123456;
   pt[1]=777888;
-    
-  // encrypt plaintext pt[]
-  rc5_encrypt(pt, ct, s);
-  // decrypt ciphertext ct[]
-  rc5_decrypt(ct, pt, s);
+
+//   printf("pt[0] before: %lu\n", pt[0]);
+//   printf("pt[0] before: %lu\n", pt[1]);
+
+  // encrypt
+  word A_array_en = pt[0] + s[0];
+  word B_array_en = pt[1] + s[1];
+  for (int i = 1; i <= R; i++) {
+    A_array_en = (((A_array_en ^ B_array_en) << B_array_en)|((A_array_en ^ B_array_en) >> (32 - B_array_en))) + s[2*i];
+    B_array_en = (((B_array_en ^ A_array_en) << A_array_en)|((B_array_en ^ A_array_en) >> (32 - A_array_en))) + s[2*i+1];
+  }
+  ct[0] = A_array_en; ct[1] = B_array_en;
+  //printf("ct[0]: %lu\n", ct[0]);
+  //printf("ct[1]: %lu\n", ct[1]);
+
+  // decrypt
+  word B_array_de = ct[1];
+  word A_array_de = ct[0];
+  for (int j = R; j > 0; j--) {
+    B_array_de = (((B_array_de - s[2*j+1]) >> A_array_de)|((B_array_de - s[2*j+1]) << (32 - A_array_de))) ^ A_array_de;
+    A_array_de = (((A_array_de - s[2*j]) >> B_array_de)|((A_array_de - s[2*j]) << (32 - B_array_de))) ^ B_array_de;
+  }
+  pt[1] = B_array_de - s[1]; pt[0] = A_array_de - s[0];
+
+//   printf("pt[0] after: %lu\n", pt[0]);
+//   printf("pt[1] after: %lu\n", pt[1]);
+
   return 0;
 }
-
-int rotateLeft(word n, word d)
-{
-  return (n << d)|(n >> (32 - d));
-}
-
-int rotateRight(word n, word d)
-{
-  return (n >> d)|(n << (32 - d));
-}
-
-void rc5_encrypt(word *pt, word *ct, word *s) {
-  int i;
-  word A_array = pt[0] + s[0];
-  word B_array = pt[1] + s[1];
-  for (i = 1; i <= R; i++) {
-    A_array = (rotateLeft((A_array ^ B_array), B_array)) + s[2*i];
-    B_array = (rotateLeft((B_array ^ A_array), A_array)) + s[2*i+1];
-  }
-  ct[0] = A_array; ct[1] = B_array;
-}
-
-void rc5_decrypt(word *ct, word *pt, word *s) {
-  int i;
-  word B_array = ct[1];
-  word A_array = ct[0];
-  for (i = R; i > 0; i--) {
-    B_array = (rotateRight((B_array - s[2*i+1]), A_array)) ^ A_array;
-    A_array = (rotateRight((A_array - s[2*i]), B_array)) ^ B_array;
-
-  }
-  pt[1] = B_array - s[1]; pt[0] = A_array - s[0];
-}
 ```
-## corresponding RISC-V Code
+##### corresponding RISC-V Code
 ```
 addi x2 x2 -112
 sw x1 108(x2)
@@ -405,7 +391,7 @@ int main()
      }
 }
 ```
-## corresponding RISC-V Code
+##### corresponding RISC-V Code
 ```
 addi x2 x2 -80
 sw x1 76(x2)
@@ -560,6 +546,12 @@ Enable signal becomes and remains low after the button is pressed and released a
 
   https://www.cs.cornell.edu/courses/cs3410/2019sp/riscv/interpreter/
 
+- C codes are modified from ChatGPT
+
   
 
+  
+
+  
+  
   
