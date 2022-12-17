@@ -43,17 +43,18 @@ process(ALUOp, func7bit2, func3) begin
             -- 0010 is set less than (signed) 
             -- 0011 is set less than (unsigned) 
             -- 0100 is XOR
-            -- 0101 is shift right logical 
+
             -- 0110 is OR 
             -- 0111 is AND
             
         elsif (func7bit2 = '1') then
             if (func3 = "000") then
-                 ALU_Control_tmp <= "1010";
+                ALU_Control_tmp <= "1010";
+                -- 1010 is substract                 
+                
             elsif (func3 = "101") then
-                 ALU_Control_tmp <= "1011";     
-            -- 1010 is substract 
-            -- 1011 is shift right arithmetic
+                ALU_Control_tmp <= "1011";  
+                -- 1011 is shift right arithmetic            
             
             else ALU_Control_tmp <= "0000";
             end if;
@@ -61,14 +62,28 @@ process(ALUOp, func7bit2, func3) begin
         end if;
     
     elsif (ALUOP = "11") then
-        ALU_Control_tmp <= '0' & func3; -- ALU Control code will be decided by funct7 and funct3
+        
+        if (func3 = "101") then
+            if (func7bit2 = '1') then
+                ALU_Control_tmp <= "1011";  
+                -- 1011 is shift right arithmetic
+                
+            elsif (func7bit2 = '0') then
+                ALU_Control_tmp <= "0101";
+                -- 0101 is shift right logical
+                 
+            end if;
+            
+        else ALU_Control_tmp <= '0' & func3; -- ALU Control code will be decided by funct7 and funct3
         -- 0000 is add 
         -- 0010 is set less than (signed) 
         -- 0011 is set less than (unsigned) 
         -- 0100 is XOR
         -- 0110 is OR 
         -- 0111 is AND
-             
+        
+        end if;
+
     else ALU_Control_tmp <= "0000";
 
     end if;
