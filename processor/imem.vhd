@@ -49,7 +49,10 @@ signal addr_word: std_logic_vector(31 downto 0);  -- 32-bit word addressed pc ad
 -- rom_words(2??= x"002080b3" the instruction at the 3rd address is x"002080b3" (add x1, x1, x2)
 -- rom_words(3??= x"ffdff06f" the instruction at the 4th address is x"ffdff06f" (j loop)
 --signal rom_words: instr_rom := (x"00100093", x"00200113", x"002080b3", x"ffdff06f", others => (others =>'X'));
-signal rom_words: instr_rom := instr_rom_readfile("RC5_2.mem");  -- change the names of test files
+
+-- at following, user can change the name of memory files that will be written into instruction memory
+-- including main2, main7, RC5_final3, bubble2_new2, special_addr
+signal rom_words: instr_rom := instr_rom_readfile("RC5_final3.mem");  -- change the names of test files
 
 signal lower_bound : std_logic_vector(31 downto 0) :=  x"00ffffff"; -- memory start address
 signal upper_bound : std_logic_vector(31 downto 0) :=  x"01000800"; -- memory end address
