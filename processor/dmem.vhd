@@ -85,7 +85,6 @@ begin
  
  
 process(clk, rst) 
-variable temp: ram:=  (others => (others =>'0'));
 variable word: std_logic_vector(31 downto 0); -- word at given address
  
 begin
